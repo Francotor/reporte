@@ -649,12 +649,16 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       nombre: 'Cuál (poste, fundación…)',
       campos: [{ k: 'elem', label: '¿Cuál se instala?', ph: 'ej: Poste 125 · Fundación poste 125' }]
     },
+    lugar: {
+      nombre: 'Cámara o fundación',
+      campos: [{ k: 'elem', label: '¿En qué cámara o fundación?', ph: 'ej: Cámara 125 · Fundación poste 12' }]
+    },
     libre: {
       nombre: 'Ubicación libre',
       campos: [{ k: 'tramo', label: 'Ubicación / tramo (opcional)', ph: 'ej: Tramo 3' }]
     }
   };
-  var FALTA_TXT = { ruta: 'desde y hasta', camara: 'qué cámara es', elemento: 'cuál se instala' };
+  var FALTA_TXT = { ruta: 'desde y hasta', camara: 'qué cámara es', elemento: 'cuál se instala', lugar: 'en qué cámara o fundación es' };
 
   function camposDe(tipo, f) {
     var c = (TIPOS[tipo] || TIPOS.libre).campos.slice();
@@ -674,7 +678,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       else if (f.desde) s = 'Desde ' + f.desde;
       else if (f.hasta) s = 'Hasta ' + f.hasta;
     } else if (tipo === 'camara') s = f.camara || '';
-    else if (tipo === 'elemento') s = f.elem || '';
+    else if (tipo === 'elemento' || tipo === 'lugar') s = f.elem || '';
     if (!s) return f.tramo || '';
     return f.tramo && tipo !== 'libre' ? s + ' · ' + f.tramo : s;
   }
@@ -690,7 +694,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
   var ACT_DEFAULT = [
     ['Zanja', 'Excavación de zanja para el tendido de canalización, según trazado del proyecto.', 'ruta'],
     ['Plaqueo de excavación', 'Plaqueo de la excavación.', 'ruta'],
-    ['Emplantillado', 'Ejecución de emplantillado en el fondo de la excavación.', 'libre'],
+    ['Emplantillado', 'Ejecución de emplantillado en el fondo de la excavación.', 'lugar'],
     ['Instalación de canalización', 'Instalación de ductos de canalización en la zanja.', 'ruta'],
     ['Reparación de ductos', 'Reparación de ductos de canalización.', 'ruta'],
     ['Capa de arena bajo ductos', 'Colocación de capa de arena bajo los ductos.', 'ruta'],
@@ -719,7 +723,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     for (var i = 0; i < lista.length; i++) if (lista[i].n === nombre) return i;
     return -1;
   }
-  function guardarActs() { lsSet('tf_acts', S.acts); lsSet('tf_acts_v', 2); }
+  function guardarActs() { lsSet('tf_acts', S.acts); lsSet('tf_acts_v', 3); }
 
   // Lista guardada de versiones anteriores: agrega el tipo y las actividades nuevas, sin tocar tus descripciones
   function cargarActs() {
@@ -742,6 +746,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       });
       lsSet('tf_acts', lista);
       lsSet('tf_acts_v', 2);
+    }
+    // v3: "Emplantillado" pasa a pedir cámara o fundación (si seguía como ubicación libre)
+    if (lsGet('tf_acts_v', 1) < 3) {
+      var ie = indiceAct(lista, 'Emplantillado');
+      if (ie >= 0 && lista[ie].t === 'libre') lista[ie].t = 'lugar';
+      lsSet('tf_acts', lista);
+      lsSet('tf_acts_v', 3);
     }
     return lista;
   }

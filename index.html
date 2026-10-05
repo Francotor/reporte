@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14213d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Fotos de terreno</title>
+<style>
+  :root {
+    --bg: #f2f3f5; --card: #fff; --ink: #121417; --mut: #5b6470; --line: #cfd4db;
+    --navy: #14213d; --amber: #fca311; --amber-d: #c97f00; --ok: #1b7f3b; --bad: #b3261e;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding-bottom: 92px; }
+  [hidden] { display: none !important; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  input, select, textarea { width: 100%; padding: 11px 12px; border: 2px solid var(--line); border-radius: 10px; background: #fff; min-width: 0; }
+  textarea { resize: vertical; }
+  button { cursor: pointer; }
+
+  .top { position: sticky; top: 0; z-index: 5; background: var(--navy); color: #fff; padding: 10px 12px 0; padding-top: max(10px, env(safe-area-inset-top)); }
+  .top .row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .top select, .top input { border-color: transparent; color: var(--ink); }
+  #btnObra { flex: 0 0 52px; border: 0; border-radius: 10px; background: var(--amber); color: #111; font-size: 24px; font-weight: 700; }
+  #fecha { flex: 0 0 150px; }
+  .tabs { display: flex; gap: 6px; }
+  .tabs button { flex: 1; border: 0; padding: 12px 6px; font-weight: 700; color: #cfd6e6; background: transparent; border-bottom: 4px solid transparent; }
+  .tabs button.on { color: #fff; border-bottom-color: var(--amber); }
+
+  main { padding: 12px; }
+  .activa { display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+  .activa .txt { flex: 1; min-width: 0; }
+  .activa small { display: block; color: var(--mut); }
+  .activa b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sec { border: 2px solid var(--line); background: #fff; border-radius: 10px; padding: 10px 12px; font-weight: 600; }
+  #pend { min-height: 20px; color: var(--amber-d); font-weight: 700; margin: 0 2px 6px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .act { position: relative; min-height: 60px; padding: 8px 34px 8px 10px; text-align: left; font-weight: 700; font-size: 15px; background: var(--card); border: 2px solid var(--line); border-radius: 12px; }
+  .act:active { background: #fff4d6; }
+  .act.on { border-color: var(--amber); background: #fff4d6; }
+  .act.nueva { border-style: dashed; color: var(--mut); font-weight: 600; padding-right: 10px; }
+  .badge { position: absolute; top: 8px; right: 8px; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 12px; background: var(--navy); color: #fff; font-size: 13px; line-height: 24px; text-align: center; }
+  .linkbar { display: flex; gap: 8px; margin-top: 14px; }
+  .linkbar button { flex: 1; }
+
+  .filtros { display: flex; gap: 8px; margin-bottom: 8px; }
+  .filtros button { flex: 1; padding: 10px; border: 2px solid var(--line); border-radius: 10px; background: #fff; font-weight: 700; }
+  .filtros button.on { background: var(--navy); border-color: var(--navy); color: #fff; }
+  .gh { display: flex; justify-content: space-between; align-items: center; margin: 16px 2px 8px; font-size: 16px; }
+  .gc { background: var(--navy); color: #fff; border-radius: 12px; padding: 2px 10px; font-size: 13px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .th { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #ddd; outline: 3px solid transparent; }
+  .th.sel { outline-color: var(--amber); }
+  .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .chk { position: absolute; top: 4px; right: 4px; width: 38px; height: 38px; border-radius: 50%; border: 2px solid #fff; background: rgba(0,0,0,.45); color: #fff; font-size: 20px; font-weight: 800; padding: 0; line-height: 1; }
+  .th.sel .chk { background: var(--amber); border-color: var(--amber); color: #111; }
+  .tg { position: absolute; left: 0; bottom: 0; right: 0; padding: 2px 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vacio { color: var(--mut); text-align: center; padding: 30px 10px; }
+
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; padding: 10px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom)); background: rgba(242,243,245,.96); border-top: 1px solid var(--line); }
+  #btnInforme { width: 100%; padding: 16px; border: 0; border-radius: 14px; background: var(--ok); color: #fff; font-weight: 800; font-size: 17px; }
+  #btnInforme.vacio { background: #7d8791; }
+  #btnInforme:disabled { opacity: .6; }
+
+  .pri { background: var(--navy); color: #fff; border: 0; border-radius: 10px; padding: 12px 16px; font-weight: 700; }
+  .ghost { background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 11px 16px; font-weight: 700; }
+  .danger { background: #fff; border: 2px solid var(--bad); color: var(--bad); border-radius: 10px; padding: 11px 16px; font-weight: 700; }
+
+  dialog { width: min(94vw, 520px); max-height: 92vh; border: 0; border-radius: 16px; padding: 16px; overflow: auto; }
+  dialog::backdrop { background: rgba(0,0,0,.55); }
+  dialog h3 { margin: 0 0 10px; }
+  .btns { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .btns > * { flex: 1; }
+
+  #detImg { width: 100%; max-height: 52vh; object-fit: contain; background: #111; border-radius: 10px; display: block; }
+  #detInfo { color: var(--mut); font-size: 13px; margin: 8px 0; }
+  .nav { display: flex; gap: 8px; margin-bottom: 8px; }
+  .nav button { flex: 1; font-size: 22px; padding: 8px; }
+  #detSel { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--line); background: #fff; font-weight: 800; margin: 4px 0 10px; }
+  #detSel.on { background: var(--amber); border-color: var(--amber); }
+  label { display: block; font-weight: 700; font-size: 13px; color: var(--mut); margin: 8px 0 4px; }
+
+  .ai { border: 2px solid var(--line); border-radius: 12px; padding: 8px; margin-bottom: 8px; display: grid; gap: 6px; }
+  .ai .del { justify-self: end; background: none; border: 0; color: var(--bad); font-weight: 700; padding: 4px 8px; }
+
+  #toast { position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 20px); background: #111; color: #fff; padding: 11px 16px; border-radius: 12px; opacity: 0; pointer-events: none; transition: .2s; z-index: 20; max-width: 90vw; text-align: center; }
+  #toast.on { opacity: 1; transform: translate(-50%, 0); }
+  .err { background: #fde8e6; color: var(--bad); padding: 14px; margin: 12px; border-radius: 10px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="row">
+    <select id="obra" aria-label="Obra"></select>
+    <button id="btnObra" type="button" aria-label="Nueva obra">＋</button>
+  </div>
+  <div class="row">
+    <input type="date" id="fecha" aria-label="Fecha">
+    <input id="tramo" placeholder="Tramo / ubicación (se anota en cada foto)" autocomplete="off">
+  </div>
+  <nav class="tabs">
+    <button type="button" data-tab="cap" class="on">📷 Capturar</button>
+    <button type="button" data-tab="fotos">✓ Elegir fotos <span id="cntFotos"></span></button>
+  </nav>
+</header>
+
+<main>
+  <section id="tab-cap">
+    <div class="activa">
+      <div class="txt"><small>Actividad activa</small><b id="activaNombre">ninguna</b></div>
+      <button id="btnGaleria" type="button" class="sec">🖼 Desde galería</button>
+    </div>
+    <div id="pend"></div>
+    <div id="grid" class="grid"></div>
+    <div class="linkbar"><button id="btnActs" type="button" class="ghost">Editar actividades y descripciones</button></div>
+  </section>
+
+  <section id="tab-fotos" hidden>
+    <div class="filtros">
+      <button id="filtroTodas" type="button" class="on">Todas</button>
+      <button id="filtroElegidas" type="button">Solo elegidas</button>
+    </div>
+    <p style="color:var(--mut);font-size:14px;margin:0 2px 4px">Toca el círculo de la esquina para elegir la foto. Toca la foto para verla grande y anotarla.</p>
+    <div id="galeria"></div>
+    <div class="linkbar"><button id="btnBorrarDia" type="button" class="danger">Borrar fotos de este día</button></div>
+  </section>
+</main>
+
+<footer class="bar"><button id="btnInforme" type="button">Generar informe Word</button></footer>
+
+<input type="file" id="cam" accept="image/*" capture="environment" hidden>
+<input type="file" id="gal" accept="image/*" multiple hidden>
+<div id="toast" role="status"></div>
+
+<dialog id="dlgTxt">
+  <h3 id="txtTitulo"></h3>
+  <input id="txtVal" autocomplete="off">
+  <div class="btns">
+    <button id="txtCancel" type="button" class="ghost">Cancelar</button>
+    <button id="txtOk" type="button" class="pri">Aceptar</button>
+  </div>
+</dialog>
+
+<dialog id="dlgActs">
+  <h3>Actividades</h3>
+  <p style="color:var(--mut);font-size:14px;margin:0 0 10px">La descripción es el texto que aparece bajo el título de cada actividad en el informe. Revísala y ajústala a tu forma de redactar.</p>
+  <div id="actsLista"></div>
+  <div class="btns">
+    <button id="actsAgregar" type="button" class="ghost">＋ Agregar</button>
+    <button id="actsReset" type="button" class="ghost">Restaurar lista</button>
+  </div>
+  <div class="btns">
+    <button id="actsCerrar" type="button" class="ghost">Cancelar</button>
+    <button id="actsGuardar" type="button" class="pri">Guardar</button>
+  </div>
+</dialog>
+
+<dialog id="dlgDet">
+  <div class="nav">
+    <button id="detPrev" type="button" class="ghost" aria-label="Anterior">‹</button>
+    <button id="detNext" type="button" class="ghost" aria-label="Siguiente">›</button>
+  </div>
+  <img id="detImg" alt="Foto">
+  <div id="detInfo"></div>
+  <button id="detSel" type="button">Incluir en el informe</button>
+  <label for="detAct">Actividad</label>
+  <select id="detAct"></select>
+  <label for="detTramo">Tramo / ubicación</label>
+  <input id="detTramo" autocomplete="off">
+  <label for="detNota">Nota (medida, observación…)</label>
+  <textarea id="detNota" rows="2"></textarea>
+  <div class="btns">
+    <button id="detBorrar" type="button" class="danger">Borrar foto</button>
+    <button id="detListo" type="button" class="pri">Listo</button>
+  </div>
+</dialog>
+
+<dialog id="dlgRes">
+  <h3>Informe listo</h3>
+  <p id="resTxt" style="word-break:break-word"></p>
+  <div class="btns">
+    <button id="resDown" type="button" class="pri">Descargar</button>
+    <button id="resShare" type="button" class="pri">Compartir</button>
+  </div>
+  <div class="btns"><button id="resCerrar" type="button" class="ghost">Cerrar</button></div>
+</dialog>
+
+<script>
+/* lib.js — ZIP (sin compresión) + generador de .docx, sin dependencias externas.
+   Funciona igual en el navegador y en Node (para pruebas). */
+var TF = (function () {
+  'use strict';
+
+  // ---------- CRC32 ----------
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(u8) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  var encoder = new TextEncoder();
+  function utf8(s) { return encoder.encode(s); }
+
+  // ---------- ZIP (método "store") ----------
+  // files: [{ name: 'word/document.xml', data: Uint8Array }]
+  function zipStore(files) {
+    var now = new Date();
+    var dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+    var dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+
+    var entries = files.map(function (f) {
+      return { name: utf8(f.name), data: f.data, crc: crc32(f.data), offset: 0 };
+    });
+
+    var total = 22;
+    entries.forEach(function (e) {
+      total += 30 + e.name.length + e.data.length; // cabecera local + datos
+      total += 46 + e.name.length;                 // directorio central
+    });
+
+    var out = new Uint8Array(total);
+    var dv = new DataView(out.buffer);
+    var p = 0;
+
+    entries.forEach(function (e) {
+      e.offset = p;
+      dv.setUint32(p, 0x04034b50, true); p += 4;
+      dv.setUint16(p, 20, true); p += 2;        // versión necesaria
+      dv.setUint16(p, 0x0800, true); p += 2;    // flags: nombres en UTF-8
+      dv.setUint16(p, 0, true); p += 2;         // método 0 = store
+      dv.setUint16(p, dosTime, true); p += 2;
+      dv.setUint16(p, dosDate, true); p += 2;
+      dv.setUint32(p, e.crc, true); p += 4;
+      dv.setUint32(p, e.data.length, true); p += 4;
+      dv.setUint32(p, e.data.length, true); p += 4;
+      dv.setUint16(p, e.name.length, true); p += 2;
+      dv.setUint16(p, 0, true); p += 2;         // extra
+      out.set(e.name, p); p += e.name.length;
+      out.set(e.data, p); p += e.data.length;
+    });
+
+    var cdStart = p;
+    entries.forEach(function (e) {
+      dv.setUint32(p, 0x02014b50, true); p += 4;
+      dv.setUint16(p, 20, true); p += 2;        // versión creada por
+      dv.setUint16(p, 20, true); p += 2;        // versión necesaria
+      dv.setUint16(p, 0x0800, true); p += 2;
+      dv.setUint16(p, 0, true); p += 2;
+      dv.setUint16(p, dosTime, true); p += 2;
+      dv.setUint16(p, dosDate, true); p += 2;
+      dv.setUint32(p, e.crc, true); p += 4;
+      dv.setUint32(p, e.data.length, true); p += 4;
+      dv.setUint32(p, e.data.length, true); p += 4;
+      dv.setUint16(p, e.name.length, true); p += 2;
+      dv.setUint16(p, 0, true); p += 2;         // extra
+      dv.setUint16(p, 0, true); p += 2;         // comentario
+      dv.setUint16(p, 0, true); p += 2;         // disco
+      dv.setUint16(p, 0, true); p += 2;         // attrs internos
+      dv.setUint32(p, 0, true); p += 4;         // attrs externos
+      dv.setUint32(p, e.offset, true); p += 4;
+      out.set(e.name, p); p += e.name.length;
+    });
+    var cdSize = p - cdStart;
+
+    dv.setUint32(p, 0x06054b50, true); p += 4;
+    dv.setUint16(p, 0, true); p += 2;
+    dv.setUint16(p, 0, true); p += 2;
+    dv.setUint16(p, entries.length, true); p += 2;
+    dv.setUint16(p, entries.length, true); p += 2;
+    dv.setUint32(p, cdSize, true); p += 4;
+    dv.setUint32(p, cdStart, true); p += 4;
+    dv.setUint16(p, 0, true); p += 2;
+    return out;
+  }
+
+  // ---------- Utilidades XML ----------
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/[\u0000-\u001F]+/g, ' ')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function run(text, o) {
+    o = o || {};
+    var rpr = '';
+    if (o.bold) rpr += '<w:b/>';
+    if (o.italic) rpr += '<w:i/>';
+    if (o.color) rpr += '<w:color w:val="' + o.color + '"/>';
+    if (o.size) rpr += '<w:sz w:val="' + o.size + '"/><w:szCs w:val="' + o.size + '"/>';
+    return '<w:r>' + (rpr ? '<w:rPr>' + rpr + '</w:rPr>' : '') +
+      '<w:t xml:space="preserve">' + esc(text) + '</w:t></w:r>';
+  }
+
+  function br() { return '<w:r><w:br/></w:r>'; }
+
+  function para(inner, o) {
+    o = o || {};
+    var ppr = '';
+    if (o.style) ppr += '<w:pStyle w:val="' + o.style + '"/>';
+    if (o.keepNext) ppr += '<w:keepNext/>';
+    if (o.before != null || o.after != null) {
+      ppr += '<w:spacing' +
+        (o.before != null ? ' w:before="' + o.before + '"' : '') +
+        (o.after != null ? ' w:after="' + o.after + '"' : '') + '/>';
+    }
+    if (o.jc) ppr += '<w:jc w:val="' + o.jc + '"/>';
+    return '<w:p>' + (ppr ? '<w:pPr>' + ppr + '</w:pPr>' : '') + (inner || '') + '</w:p>';
+  }
+
+  var EMU_CM = 360000;
+
+  function fitEmu(w, h, maxWcm, maxHcm) {
+    var maxW = maxWcm * EMU_CM, maxH = maxHcm * EMU_CM;
+    var s = Math.min(maxW / w, maxH / h);
+    return { cx: Math.round(w * s), cy: Math.round(h * s) };
+  }
+
+  function drawing(rid, n, cx, cy) {
+    return '<w:r><w:drawing>' +
+      '<wp:inline distT="0" distB="0" distL="0" distR="0">' +
+      '<wp:extent cx="' + cx + '" cy="' + cy + '"/>' +
+      '<wp:docPr id="' + n + '" name="Foto ' + n + '"/>' +
+      '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>' +
+      '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">' +
+      '<pic:pic><pic:nvPicPr><pic:cNvPr id="' + n + '" name="foto' + n + '.jpg"/><pic:cNvPicPr/></pic:nvPicPr>' +
+      '<pic:blipFill><a:blip r:embed="' + rid + '"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill>' +
+      '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' + cx + '" cy="' + cy + '"/></a:xfrm>' +
+      '<a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic>' +
+      '</a:graphicData></a:graphic></wp:inline></w:drawing></w:r>';
+  }
+
+  var NS =
+    'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ' +
+    'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" ' +
+    'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" ' +
+    'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" ' +
+    'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"';
+
+  var COL_W = 4819; // twips (8,5 cm). 2 columnas = 9638 = ancho útil A4 con márgenes de 2 cm
+
+  function photoCell(foto, imgIndex, ridOf) {
+    var size = fitEmu(foto.w, foto.h, 8.2, 9.5);
+    var cap = [];
+    var l1 = [];
+    if (foto.hora) l1.push(foto.hora);
+    if (foto.tramo) l1.push(foto.tramo);
+    if (l1.length) cap.push(run(l1.join(' · '), { bold: true, size: 18 }));
+    if (foto.nota) {
+      if (cap.length) cap.push(br());
+      cap.push(run(foto.nota, { size: 18 }));
+    }
+    if (foto.gps) {
+      if (cap.length) cap.push(br());
+      cap.push(run('GPS ' + foto.gps, { size: 15, color: '7F7F7F' }));
+    }
+    return '<w:tc><w:tcPr><w:tcW w:w="' + COL_W + '" w:type="dxa"/></w:tcPr>' +
+      para(drawing(ridOf(imgIndex), imgIndex, size.cx, size.cy), { after: 40 }) +
+      para(cap.join(''), { after: 200 }) +
+      '</w:tc>';
+  }
+
+  function emptyCell() {
+    return '<w:tc><w:tcPr><w:tcW w:w="' + COL_W + '" w:type="dxa"/></w:tcPr>' + para('') + '</w:tc>';
+  }
+
+  /* d = {
+       titulo, obra, fechaTexto, generado,
+       grupos: [{ actividad, descripcion, fotos: [{ jpeg:Uint8Array, w, h, hora, tramo, nota, gps }] }]
+     } */
+  function buildDocx(d) {
+    var media = [];       // {name, data}
+    var relXml = '';
+    var imgCount = 0;
+
+    function addImage(jpeg) {
+      imgCount++;
+      media.push({ name: 'word/media/foto' + imgCount + '.jpg', data: jpeg });
+      relXml += '<Relationship Id="rIdImg' + imgCount + '" ' +
+        'Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" ' +
+        'Target="media/foto' + imgCount + '.jpg"/>';
+      return imgCount;
+    }
+
+    var totalFotos = 0;
+    d.grupos.forEach(function (g) { totalFotos += g.fotos.length; });
+
+    var body = '';
+    body += para(run(d.titulo || 'Informe de terreno'), { style: 'Title' });
+    body += para(run('Obra: ', { bold: true }) + run(d.obra || '—'), { after: 40 });
+    body += para(run('Fecha: ', { bold: true }) + run(d.fechaTexto || ''), { after: 40 });
+    body += para(
+      run('Registro fotográfico: ', { bold: true }) +
+      run(totalFotos + ' fotos en ' + d.grupos.length + ' actividades'), { after: 160 });
+
+    d.grupos.forEach(function (g) {
+      body += para(run('• ' + g.actividad + ' — ' + g.fotos.length + (g.fotos.length === 1 ? ' foto' : ' fotos')), { after: 20 });
+    });
+
+    d.grupos.forEach(function (g, gi) {
+      body += para(
+        run((gi + 1) + '. ' + g.actividad) +
+        run('   ' + g.fotos.length + (g.fotos.length === 1 ? ' foto' : ' fotos'), { size: 20, color: '7F7F7F' }),
+        { style: 'Heading2' });
+      if (g.descripcion) body += para(run(g.descripcion), { keepNext: true, after: 120 });
+
+      var rows = '';
+      for (var i = 0; i < g.fotos.length; i += 2) {
+        var a = g.fotos[i], b = g.fotos[i + 1];
+        var ia = addImage(a.jpeg);
+        var cellA = photoCell(a, ia, function (n) { return 'rIdImg' + n; });
+        var cellB;
+        if (b) {
+          var ib = addImage(b.jpeg);
+          cellB = photoCell(b, ib, function (n) { return 'rIdImg' + n; });
+        } else {
+          cellB = emptyCell();
+        }
+        rows += '<w:tr><w:trPr><w:cantSplit/></w:trPr>' + cellA + cellB + '</w:tr>';
+      }
+      if (rows) {
+        body += '<w:tbl><w:tblPr><w:tblW w:w="' + (COL_W * 2) + '" w:type="dxa"/>' +
+          '<w:tblLayout w:type="fixed"/>' +
+          '<w:tblCellMar><w:left w:w="0" w:type="dxa"/><w:right w:w="100" w:type="dxa"/></w:tblCellMar></w:tblPr>' +
+          '<w:tblGrid><w:gridCol w:w="' + COL_W + '"/><w:gridCol w:w="' + COL_W + '"/></w:tblGrid>' +
+          rows + '</w:tbl>';
+      }
+    });
+
+    if (d.generado) {
+      body += para(run(d.generado, { size: 16, color: '7F7F7F' }), { before: 240 });
+    }
+
+    var sect =
+      '<w:sectPr><w:footerReference w:type="default" r:id="rIdFooter"/>' +
+      '<w:pgSz w:w="11906" w:h="16838"/>' +
+      '<w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/>' +
+      '</w:sectPr>';
+
+    var documentXml =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:document ' + NS + '><w:body>' + body + sect + '</w:body></w:document>';
+
+    var stylesXml =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+      '<w:docDefaults><w:rPrDefault><w:rPr>' +
+      '<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="Calibri" w:cs="Calibri"/>' +
+      '<w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="es-CL"/></w:rPr></w:rPrDefault>' +
+      '<w:pPrDefault><w:pPr><w:spacing w:after="120" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault>' +
+      '</w:docDefaults>' +
+      '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>' +
+      '<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/>' +
+      '<w:next w:val="Normal"/><w:qFormat/><w:pPr><w:spacing w:before="0" w:after="160"/></w:pPr>' +
+      '<w:rPr><w:b/><w:color w:val="1F3864"/><w:sz w:val="44"/><w:szCs w:val="44"/></w:rPr></w:style>' +
+      '<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/>' +
+      '<w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="360" w:after="80"/>' +
+      '<w:outlineLvl w:val="1"/></w:pPr>' +
+      '<w:rPr><w:b/><w:color w:val="1F3864"/><w:sz w:val="30"/><w:szCs w:val="30"/></w:rPr></w:style>' +
+      '</w:styles>';
+
+    var footerXml =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:ftr ' + NS + '><w:p><w:pPr><w:jc w:val="center"/></w:pPr>' +
+      run((d.obra || '') + (d.fechaTexto ? ' · ' + d.fechaTexto : '') + '   —   Página ', { size: 16, color: '7F7F7F' }) +
+      '<w:fldSimple w:instr=" PAGE "><w:r><w:rPr><w:sz w:val="16"/><w:color w:val="7F7F7F"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple>' +
+      run(' de ', { size: 16, color: '7F7F7F' }) +
+      '<w:fldSimple w:instr=" NUMPAGES "><w:r><w:rPr><w:sz w:val="16"/><w:color w:val="7F7F7F"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple>' +
+      '</w:p></w:ftr>';
+
+    var contentTypes =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+      '<Default Extension="xml" ContentType="application/xml"/>' +
+      '<Default Extension="jpg" ContentType="image/jpeg"/>' +
+      '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+      '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
+      '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>' +
+      '</Types>';
+
+    var rootRels =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+      '</Relationships>';
+
+    var docRels =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+      '<Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+      '<Relationship Id="rIdFooter" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' +
+      relXml + '</Relationships>';
+
+    var files = [
+      { name: '[Content_Types].xml', data: utf8(contentTypes) },
+      { name: '_rels/.rels', data: utf8(rootRels) },
+      { name: 'word/document.xml', data: utf8(documentXml) },
+      { name: 'word/styles.xml', data: utf8(stylesXml) },
+      { name: 'word/footer1.xml', data: utf8(footerXml) },
+      { name: 'word/_rels/document.xml.rels', data: utf8(docRels) }
+    ].concat(media);
+
+    return zipStore(files);
+  }
+
+  return { crc32: crc32, zipStore: zipStore, buildDocx: buildDocx, esc: esc };
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = TF;
+
+</script>
+<script>
+/* app.js — Fotos de terreno. Todo local: IndexedDB + informe Word generado en el teléfono. */
+(function () {
+  'use strict';
+
+  // ---------- utilidades ----------
+  var $ = function (s) { return document.querySelector(s); };
+
+  function h(tag, attrs) {
+    var e = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (k === 'class') e.className = v;
+        else if (k === 'text') e.textContent = v;
+        else if (k === 'value') e.value = v;
+        else if (k.indexOf('on') === 0) e.addEventListener(k.slice(2), v);
+        else if (v === true) e.setAttribute(k, '');
+        else if (v !== false && v != null) e.setAttribute(k, v);
+      });
+    }
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c == null || c === false) continue;
+      e.append(c.nodeType ? c : document.createTextNode(c));
+    }
+    return e;
+  }
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fechaLocal(ts) { var d = new Date(ts); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function horaDe(ts) { var d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function fechaCorta(ts) { var d = new Date(ts); return pad(d.getDate()) + '-' + pad(d.getMonth() + 1) + '-' + d.getFullYear(); }
+  function fechaLarga(iso) {
+    var p = iso.split('-');
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    var s = d.toLocaleDateString('es-CL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+  function gpsTexto(f) {
+    if (f.lat == null) return null;
+    return f.lat.toFixed(5) + ', ' + f.lon.toFixed(5) + (f.acc != null ? ' (±' + f.acc + ' m)' : '');
+  }
+  function slug(s) {
+    return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'obra';
+  }
+  function lsGet(k, def) { try { var v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }
+
+  // ---------- actividades por defecto (editables desde la app) ----------
+  var ACT_DEFAULT = [
+    ['Zanja', 'Excavación de zanja para el tendido de canalización, según trazado del proyecto.'],
+    ['Plaqueo de excavación', 'Plaqueo de la excavación.'],
+    ['Emplantillado', 'Ejecución de emplantillado en el fondo de la excavación.'],
+    ['Instalación de canalización', 'Instalación de ductos de canalización en la zanja.'],
+    ['Reparación de ductos', 'Reparación de ductos de canalización.'],
+    ['Capa de arena sobre ductos', 'Colocación de capa de arena sobre los ductos.'],
+    ['Cable a tierra', 'Instalación de conductor de puesta a tierra.'],
+    ['Cinta de peligro', 'Colocación de cinta de advertencia sobre la canalización.'],
+    ['Instalación de cámara', 'Instalación de cámara en el punto indicado por el proyecto.'],
+    ['Tapa de cámara', 'Instalación de tapa de cámara.'],
+    ['Refuerzo de hormigón en cámara', 'Ejecución de refuerzo de hormigón en cámara.'],
+    ['Moldaje de refuerzo', 'Instalación de moldaje para el refuerzo de hormigón.'],
+    ['Pintura de refuerzo (tierra de color)', 'Aplicación de tierra de color al refuerzo de hormigón.'],
+    ['Instalación de fundación', 'Instalación de fundación.'],
+    ['Hormigonado de fundación', 'Hormigonado de fundación.'],
+    ['Poste peatonal / ciclovía', 'Instalación de poste peatonal y/o de ciclovía.'],
+    ['Poste vial', 'Instalación de poste vial.'],
+    ['Armado de luminaria', 'Armado de luminaria.'],
+    ['Armado de tablero', 'Armado de tablero eléctrico.'],
+    ['Instalación de tablero', 'Instalación de tablero eléctrico.'],
+    ['Armado de empalme', 'Armado de empalme.'],
+    ['Instalación de empalme', 'Instalación de empalme.']
+  ];
+  function actsDefault() { return ACT_DEFAULT.map(function (a) { return { n: a[0], d: a[1] }; }); }
+
+  // ---------- estado ----------
+  var S = {
+    obras: lsGet('tf_obras', []),
+    obra: lsGet('tf_obra', ''),
+    fecha: fechaLocal(Date.now()),
+    fechaAuto: true,
+    tramo: lsGet('tf_tramo', ''),
+    acts: lsGet('tf_acts', null) || actsDefault(),
+    activa: lsGet('tf_activa', null),
+    fotos: [],
+    filtro: 'todas',
+    urls: [],
+    cola: Promise.resolve(),
+    pend: 0,
+    det: null,
+    detUrl: null
+  };
+  if (S.obras.indexOf(S.obra) < 0) S.obra = S.obras[0] || '';
+
+  // ---------- IndexedDB ----------
+  var db = null;
+  function abrirDB() {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open('fotos-terreno', 1);
+      r.onupgradeneeded = function () {
+        var s = r.result.createObjectStore('fotos', { keyPath: 'id', autoIncrement: true });
+        s.createIndex('od', 'od');
+      };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+  }
+  function tx(modo, fn) {
+    return new Promise(function (res, rej) {
+      var t = db.transaction('fotos', modo);
+      var req;
+      try { req = fn(t.objectStore('fotos')); } catch (e) { rej(e); return; }
+      t.oncomplete = function () { res(req ? req.result : undefined); };
+      t.onerror = function () { rej(t.error); };
+      t.onabort = function () { rej(t.error || new Error('Transacción cancelada')); };
+    });
+  }
+  function dbAdd(rec) { return tx('readwrite', function (s) { return s.add(rec); }); }
+  function dbPut(rec) { return tx('readwrite', function (s) { return s.put(rec); }); }
+  function dbDel(id) { return tx('readwrite', function (s) { return s.delete(id); }); }
+  function dbDia(obra, fecha) {
+    return tx('readonly', function (s) { return s.index('od').getAll(IDBKeyRange.only(obra + '|' + fecha)); });
+  }
+
+  // ---------- avisos ----------
+  var toastTimer = null;
+  function aviso(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('on'); }, 2800);
+  }
+
+  // ---------- diálogo de texto simple ----------
+  function pedirTexto(titulo, placeholder, valor) {
+    return new Promise(function (res) {
+      var dlg = $('#dlgTxt'), inp = $('#txtVal');
+      $('#txtTitulo').textContent = titulo;
+      inp.placeholder = placeholder || '';
+      inp.value = valor || '';
+      var fin = function () {
+        dlg.removeEventListener('close', fin);
+        res(dlg.returnValue === 'ok' ? inp.value.trim() : null);
+      };
+      dlg.addEventListener('close', fin);
+      dlg.returnValue = '';
+      dlg.showModal();
+      inp.focus();
+    });
+  }
+
+  // ---------- renderizado ----------
+  function descDe(nombre) {
+    for (var i = 0; i < S.acts.length; i++) if (S.acts[i].n === nombre) return S.acts[i].d;
+    return '';
+  }
+
+  function renderObras() {
+    var sel = $('#obra');
+    sel.replaceChildren();
+    if (!S.obras.length) sel.append(h('option', { value: '', text: '— crea una obra —' }));
+    S.obras.forEach(function (o) { sel.append(h('option', { value: o, text: o })); });
+    sel.value = S.obra;
+  }
+
+  function renderActs() {
+    var cont = $('#grid');
+    cont.replaceChildren();
+    var cuenta = {};
+    S.fotos.forEach(function (f) { cuenta[f.actividad] = (cuenta[f.actividad] || 0) + 1; });
+    S.acts.forEach(function (a) {
+      cont.append(h('button', {
+        type: 'button',
+        class: 'act' + (S.activa === a.n ? ' on' : ''),
+        onclick: function () { tomarFoto(a.n); }
+      }, a.n, cuenta[a.n] ? h('span', { class: 'badge', text: cuenta[a.n] }) : null));
+    });
+    cont.append(h('button', { type: 'button', class: 'act nueva', onclick: nuevaActividad }, '＋ Otra actividad'));
+    $('#activaNombre').textContent = S.activa || 'ninguna';
+  }
+
+  function renderPend() {
+    var e = $('#pend');
+    e.textContent = S.pend ? 'Procesando ' + S.pend + (S.pend === 1 ? ' foto…' : ' fotos…') : '';
+  }
+
+  function renderBarra() {
+    var n = S.fotos.filter(function (f) { return f.sel; }).length;
+    var b = $('#btnInforme');
+    b.textContent = n ? 'Generar informe Word · ' + n + (n === 1 ? ' foto' : ' fotos') : 'Elige fotos para el informe';
+    b.classList.toggle('vacio', n === 0);
+    $('#cntFotos').textContent = S.fotos.length ? '(' + n + '/' + S.fotos.length + ')' : '';
+  }
+
+  function renderGaleria() {
+    S.urls.forEach(function (u) { URL.revokeObjectURL(u); });
+    S.urls = [];
+    var cont = $('#galeria');
+    cont.replaceChildren();
+    var lista = S.fotos.slice().sort(function (a, b) { return a.ts - b.ts; })
+      .filter(function (f) { return S.filtro === 'todas' || f.sel; });
+
+    if (!lista.length) {
+      cont.append(h('p', { class: 'vacio', text: S.fotos.length ? 'Aún no has elegido ninguna foto.' : 'No hay fotos para esta obra y fecha.' }));
+      return;
+    }
+    var grupos = [];
+    var idx = {};
+    lista.forEach(function (f) {
+      if (!(f.actividad in idx)) { idx[f.actividad] = grupos.length; grupos.push({ n: f.actividad, fs: [] }); }
+      grupos[idx[f.actividad]].fs.push(f);
+    });
+    grupos.forEach(function (g) {
+      var elegidas = g.fs.filter(function (f) { return f.sel; }).length;
+      cont.append(h('h3', { class: 'gh' }, g.n, h('span', { class: 'gc', text: elegidas + '/' + g.fs.length })));
+      var grid = h('div', { class: 'grid3' });
+      g.fs.forEach(function (f) {
+        var url = URL.createObjectURL(new Blob([f.th], { type: 'image/jpeg' }));
+        S.urls.push(url);
+        var i = lista.indexOf(f);
+        grid.append(h('div', { class: 'th' + (f.sel ? ' sel' : '') },
+          h('img', { src: url, alt: f.actividad, onclick: function () { abrirDet(lista, i); } }),
+          h('button', { type: 'button', class: 'chk', 'aria-label': 'Incluir en el informe', onclick: function () { alternarSel(f); } }, f.sel ? '✓' : ''),
+          f.tramo ? h('span', { class: 'tg', text: f.tramo }) : null));
+      });
+      cont.append(grid);
+    });
+  }
+
+  function renderTodo() { renderActs(); renderGaleria(); renderBarra(); }
+
+  async function cargarDia() {
+    if (!S.obra) { S.fotos = []; renderTodo(); return; }
+    S.fotos = await dbDia(S.obra, S.fecha);
+    renderTodo();
+  }
+
+  async function alternarSel(f) {
+    f.sel = f.sel ? 0 : 1;
+    var y = window.scrollY;
+    await dbPut(f);
+    renderGaleria();
+    renderBarra();
+    window.scrollTo(0, y);
+  }
+
+  // ---------- captura ----------
+  function tomarFoto(nombre) {
+    if (!S.obra) { aviso('Primero crea una obra (botón ＋ arriba).'); nuevaObra(); return; }
+    S.activa = nombre;
+    lsSet('tf_activa', nombre);
+    renderActs();
+    $('#cam').click();
+  }
+
+  function posicion() {
+    return new Promise(function (res) {
+      if (!navigator.geolocation) return res(null);
+      var listo = false;
+      var t = setTimeout(function () { if (!listo) { listo = true; res(null); } }, 5000);
+      navigator.geolocation.getCurrentPosition(function (p) {
+        if (listo) return; listo = true; clearTimeout(t);
+        res({ lat: p.coords.latitude, lon: p.coords.longitude, acc: Math.round(p.coords.accuracy) });
+      }, function () {
+        if (listo) return; listo = true; clearTimeout(t); res(null);
+      }, { enableHighAccuracy: true, timeout: 4500, maximumAge: 60000 });
+    });
+  }
+
+  async function decodificar(file) {
+    if (window.createImageBitmap) {
+      try {
+        var b = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        return { src: b, w: b.width, h: b.height, fin: function () { if (b.close) b.close(); } };
+      } catch (e) { /* cae al método con <img> */ }
+    }
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file);
+      var im = new Image();
+      im.onload = function () { res({ src: im, w: im.naturalWidth, h: im.naturalHeight, fin: function () { URL.revokeObjectURL(url); } }); };
+      im.onerror = function () { URL.revokeObjectURL(url); rej(new Error('No se pudo leer la imagen')); };
+      im.src = url;
+    });
+  }
+
+  function aBuffer(canvas, calidad) {
+    return new Promise(function (res, rej) {
+      canvas.toBlob(function (blob) {
+        if (!blob) return rej(new Error('No se pudo comprimir la imagen'));
+        var fr = new FileReader();
+        fr.onload = function () { res(fr.result); };
+        fr.onerror = function () { rej(fr.error); };
+        fr.readAsArrayBuffer(blob);
+      }, 'image/jpeg', calidad);
+    });
+  }
+
+  // Franja inferior con: actividad / obra y tramo / fecha, hora y GPS
+  function sellar(ctx, cw, ch, lineas) {
+    var base = Math.max(14, Math.round(Math.min(cw, ch) * 0.023));
+    var pad = Math.round(base * 0.6);
+    ctx.font = 'bold ' + base + 'px sans-serif';
+    var ancho = 0;
+    lineas.forEach(function (t, i) {
+      ctx.font = (i === 0 ? 'bold ' : '') + base + 'px sans-serif';
+      ancho = Math.max(ancho, ctx.measureText(t).width);
+    });
+    var tam = ancho > cw - 2 * pad ? Math.floor(base * (cw - 2 * pad) / ancho) : base;
+    var alto = Math.round(tam * 1.25) * lineas.length + pad * 2;
+    ctx.fillStyle = 'rgba(0,0,0,0.62)';
+    ctx.fillRect(0, ch - alto, cw, alto);
+    ctx.fillStyle = '#fff';
+    ctx.textBaseline = 'top';
+    lineas.forEach(function (t, i) {
+      ctx.font = (i === 0 ? 'bold ' : '') + tam + 'px sans-serif';
+      ctx.fillText(t, pad, ch - alto + pad + i * Math.round(tam * 1.25));
+    });
+  }
+
+  async function procesar(file, ctx) {
+    var gps = ctx.conGps ? await posicion() : null;
+    var img = await decodificar(file);
+    try {
+      var MAX = 1600;
+      var esc = Math.min(1, MAX / Math.max(img.w, img.h));
+      var cw = Math.round(img.w * esc), ch = Math.round(img.h * esc);
+      var c = document.createElement('canvas');
+      c.width = cw; c.height = ch;
+      var g = c.getContext('2d');
+      g.drawImage(img.src, 0, 0, cw, ch);
+
+      var l2 = ctx.obra + (ctx.tramo ? ' · ' + ctx.tramo : '');
+      var l3 = fechaCorta(ctx.ts) + ' ' + horaDe(ctx.ts) + (gps ? ' · ' + gps.lat.toFixed(5) + ', ' + gps.lon.toFixed(5) : '');
+      sellar(g, cw, ch, [ctx.actividad, l2, l3]);
+
+      var buf = await aBuffer(c, 0.82);
+
+      var te = Math.min(1, 240 / Math.max(cw, ch));
+      var tc = document.createElement('canvas');
+      tc.width = Math.max(1, Math.round(cw * te)); tc.height = Math.max(1, Math.round(ch * te));
+      tc.getContext('2d').drawImage(c, 0, 0, tc.width, tc.height);
+      var th = await aBuffer(tc, 0.7);
+
+      var rec = {
+        obra: ctx.obra, fecha: ctx.fecha, od: ctx.obra + '|' + ctx.fecha,
+        actividad: ctx.actividad, tramo: ctx.tramo, nota: '', ts: ctx.ts,
+        lat: gps ? gps.lat : null, lon: gps ? gps.lon : null, acc: gps ? gps.acc : null,
+        w: cw, h: ch, buf: buf, th: th, sel: 0
+      };
+      rec.id = await dbAdd(rec);
+      if (rec.obra === S.obra && rec.fecha === S.fecha) {
+        S.fotos.push(rec);
+        renderTodo();
+      }
+      var n = 0;
+      S.fotos.forEach(function (f) { if (f.actividad === rec.actividad) n++; });
+      aviso('Guardada: ' + rec.actividad + (rec.obra === S.obra && rec.fecha === S.fecha ? ' (' + n + ')' : ''));
+    } finally {
+      img.fin();
+    }
+  }
+
+  function encolar(file, ctx) {
+    S.pend++;
+    renderPend();
+    S.cola = S.cola.then(function () { return procesar(file, ctx); })
+      .catch(function (e) { aviso('Error: ' + (e && e.message ? e.message : e)); })
+      .then(function () { S.pend--; renderPend(); });
+  }
+
+  // ---------- obras y actividades ----------
+  async function nuevaObra() {
+    var n = await pedirTexto('Nueva obra', 'Nombre de la obra');
+    if (!n) return;
+    if (S.obras.indexOf(n) < 0) S.obras.push(n);
+    S.obra = n;
+    lsSet('tf_obras', S.obras);
+    lsSet('tf_obra', S.obra);
+    renderObras();
+    await cargarDia();
+  }
+
+  async function nuevaActividad() {
+    var n = await pedirTexto('Nueva actividad', 'Nombre de la actividad');
+    if (!n) return;
+    if (!S.acts.some(function (a) { return a.n === n; })) {
+      S.acts.push({ n: n, d: '' });
+      lsSet('tf_acts', S.acts);
+    }
+    renderActs();
+    aviso('Agregada. Puedes escribirle una descripción en "Editar actividades".');
+  }
+
+  function abrirActs() {
+    var trabajo = S.acts.map(function (a) { return { n: a.n, d: a.d }; });
+    var lista = $('#actsLista');
+    function pintar() {
+      lista.replaceChildren();
+      trabajo.forEach(function (a, i) {
+        lista.append(h('div', { class: 'ai' },
+          h('input', { value: a.n, placeholder: 'Nombre', oninput: function (e) { a.n = e.target.value; } }),
+          h('textarea', { rows: 2, placeholder: 'Descripción que sale en el informe', value: a.d, oninput: function (e) { a.d = e.target.value; } }),
+          h('button', { type: 'button', class: 'del', onclick: function () { trabajo.splice(i, 1); pintar(); } }, 'Quitar')));
+      });
+    }
+    pintar();
+    $('#actsAgregar').onclick = function () { trabajo.push({ n: '', d: '' }); pintar(); lista.lastChild.querySelector('input').focus(); };
+    $('#actsReset').onclick = function () { trabajo = actsDefault(); pintar(); };
+    $('#actsGuardar').onclick = function () {
+      S.acts = trabajo.filter(function (a) { return a.n.trim(); }).map(function (a) { return { n: a.n.trim(), d: (a.d || '').trim() }; });
+      lsSet('tf_acts', S.acts);
+      $('#dlgActs').close();
+      renderActs();
+    };
+    $('#dlgActs').showModal();
+  }
+
+  // ---------- detalle de foto ----------
+  function abrirDet(lista, i) {
+    S.det = { lista: lista, i: i };
+    pintarDet();
+    var dlg = $('#dlgDet');
+    if (!dlg.open) dlg.showModal();
+  }
+
+  function pintarDet() {
+    var f = S.det.lista[S.det.i];
+    if (S.detUrl) URL.revokeObjectURL(S.detUrl);
+    S.detUrl = URL.createObjectURL(new Blob([f.buf], { type: 'image/jpeg' }));
+    $('#detImg').src = S.detUrl;
+    $('#detInfo').textContent = (S.det.i + 1) + ' de ' + S.det.lista.length + ' · ' + horaDe(f.ts) + (gpsTexto(f) ? ' · GPS ' + gpsTexto(f) : ' · sin GPS');
+    $('#detTramo').value = f.tramo || '';
+    $('#detNota').value = f.nota || '';
+    var sel = $('#detAct');
+    sel.replaceChildren();
+    var nombres = S.acts.map(function (a) { return a.n; });
+    if (nombres.indexOf(f.actividad) < 0) nombres.unshift(f.actividad);
+    nombres.forEach(function (n) { sel.append(h('option', { value: n, text: n })); });
+    sel.value = f.actividad;
+    pintarSelDet(f);
+  }
+
+  function pintarSelDet(f) {
+    var b = $('#detSel');
+    b.textContent = f.sel ? '✓ Va en el informe (tocar para quitar)' : 'Incluir en el informe';
+    b.classList.toggle('on', !!f.sel);
+  }
+
+  async function guardarDet() {
+    if (!S.det) return;
+    var f = S.det.lista[S.det.i];
+    var tramo = $('#detTramo').value.trim(), nota = $('#detNota').value.trim(), act = $('#detAct').value;
+    if (tramo !== (f.tramo || '') || nota !== (f.nota || '') || act !== f.actividad) {
+      f.tramo = tramo; f.nota = nota; f.actividad = act;
+      await dbPut(f);
+    }
+  }
+
+  async function navDet(delta) {
+    var j = S.det.i + delta;
+    if (j < 0 || j >= S.det.lista.length) return;
+    await guardarDet();
+    S.det.i = j;
+    pintarDet();
+  }
+
+  // ---------- informe ----------
+  async function generarInforme() {
+    var sel = S.fotos.filter(function (f) { return f.sel; }).sort(function (a, b) { return a.ts - b.ts; });
+    if (!sel.length) {
+      aviso('Elige al menos una foto en la pestaña "Elegir fotos".');
+      mostrarTab('fotos');
+      return;
+    }
+    var btn = $('#btnInforme');
+    btn.disabled = true;
+    try {
+      await new Promise(function (r) { setTimeout(r, 30); });
+      var grupos = [], idx = {};
+      sel.forEach(function (f) {
+        if (!(f.actividad in idx)) {
+          idx[f.actividad] = grupos.length;
+          grupos.push({ actividad: f.actividad, descripcion: descDe(f.actividad), fotos: [] });
+        }
+        grupos[idx[f.actividad]].fotos.push({
+          jpeg: new Uint8Array(f.buf), w: f.w, h: f.h,
+          hora: horaDe(f.ts), tramo: f.tramo || '', nota: f.nota || '', gps: gpsTexto(f)
+        });
+      });
+      var ahora = Date.now();
+      var bytes = TF.buildDocx({
+        titulo: 'Informe de terreno',
+        obra: S.obra,
+        fechaTexto: fechaLarga(S.fecha),
+        generado: 'Generado el ' + fechaCorta(ahora) + ' a las ' + horaDe(ahora),
+        grupos: grupos
+      });
+      var tipo = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      var nombre = 'Informe_' + slug(S.obra) + '_' + S.fecha + '.docx';
+      mostrarResultado(new Blob([bytes], { type: tipo }), nombre, sel.length);
+    } catch (e) {
+      aviso('No se pudo generar el informe: ' + (e && e.message ? e.message : e));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function mostrarResultado(blob, nombre, n) {
+    var mb = (blob.size / 1048576).toFixed(1);
+    $('#resTxt').textContent = nombre + ' · ' + n + (n === 1 ? ' foto' : ' fotos') + ' · ' + mb + ' MB';
+    var url = URL.createObjectURL(blob);
+    var file = null;
+    try { file = new File([blob], nombre, { type: blob.type }); } catch (e) { /* File no disponible */ }
+    var puedeCompartir = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
+    $('#resShare').hidden = !puedeCompartir;
+    $('#resDown').onclick = function () {
+      var a = h('a', { href: url, download: nombre });
+      document.body.append(a);
+      a.click();
+      a.remove();
+    };
+    $('#resShare').onclick = function () {
+      navigator.share({ files: [file], title: nombre }).catch(function () { /* cancelado */ });
+    };
+    var dlg = $('#dlgRes');
+    dlg.onclose = function () { setTimeout(function () { URL.revokeObjectURL(url); }, 60000); };
+    dlg.showModal();
+  }
+
+  async function borrarDia() {
+    if (!S.fotos.length) { aviso('No hay fotos que borrar.'); return; }
+    if (!confirm('¿Borrar las ' + S.fotos.length + ' fotos de ' + S.obra + ' del ' + fechaLarga(S.fecha) + '? Esto no se puede deshacer.')) return;
+    for (var i = 0; i < S.fotos.length; i++) await dbDel(S.fotos[i].id);
+    await cargarDia();
+    aviso('Fotos del día borradas.');
+  }
+
+  // ---------- pestañas ----------
+  function mostrarTab(t) {
+    $('#tab-cap').hidden = t !== 'cap';
+    $('#tab-fotos').hidden = t !== 'fotos';
+    document.querySelectorAll('.tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === t); });
+    if (t === 'fotos') renderGaleria();
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- arranque ----------
+  async function init() {
+    try { db = await abrirDB(); } catch (e) {
+      document.body.prepend(h('p', { class: 'err', text: 'Este navegador no permite guardar fotos (IndexedDB). Prueba con Chrome o Safari fuera de modo privado.' }));
+      return;
+    }
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+
+    $('#fecha').value = S.fecha;
+    $('#tramo').value = S.tramo;
+    renderObras();
+
+    $('#obra').onchange = async function (e) { S.obra = e.target.value; lsSet('tf_obra', S.obra); await cargarDia(); };
+    $('#btnObra').onclick = nuevaObra;
+    $('#fecha').onchange = async function (e) {
+      if (!e.target.value) return;
+      S.fecha = e.target.value;
+      S.fechaAuto = S.fecha === fechaLocal(Date.now());
+      await cargarDia();
+    };
+    $('#tramo').oninput = function (e) { S.tramo = e.target.value.trim(); lsSet('tf_tramo', S.tramo); };
+
+    document.querySelectorAll('.tabs button').forEach(function (b) { b.onclick = function () { mostrarTab(b.dataset.tab); }; });
+    $('#filtroTodas').onclick = function () { S.filtro = 'todas'; $('#filtroTodas').classList.add('on'); $('#filtroElegidas').classList.remove('on'); renderGaleria(); };
+    $('#filtroElegidas').onclick = function () { S.filtro = 'elegidas'; $('#filtroElegidas').classList.add('on'); $('#filtroTodas').classList.remove('on'); renderGaleria(); };
+    $('#btnActs').onclick = abrirActs;
+    $('#btnBorrarDia').onclick = borrarDia;
+    $('#btnInforme').onclick = generarInforme;
+    $('#resCerrar').onclick = function () { $('#dlgRes').close(); };
+
+    // cámara
+    $('#cam').onchange = function (e) {
+      var files = Array.prototype.slice.call(e.target.files || []);
+      e.target.value = '';
+      if (!files.length || !S.activa) return;
+      files.forEach(function (file) {
+        encolar(file, { obra: S.obra, fecha: S.fecha, tramo: S.tramo, actividad: S.activa, ts: Date.now(), conGps: true });
+      });
+    };
+    // galería
+    $('#btnGaleria').onclick = function () {
+      if (!S.obra) { aviso('Primero crea una obra.'); return; }
+      if (!S.activa) { aviso('Toca primero una actividad para elegir a cuál pertenecen.'); return; }
+      $('#gal').click();
+    };
+    $('#gal').onchange = function (e) {
+      var files = Array.prototype.slice.call(e.target.files || []);
+      e.target.value = '';
+      if (!S.activa) return;
+      files.forEach(function (file) {
+        var ts = file.lastModified || Date.now();
+        encolar(file, { obra: S.obra, fecha: fechaLocal(ts), tramo: S.tramo, actividad: S.activa, ts: ts, conGps: false });
+      });
+    };
+
+    // diálogos
+    $('#txtOk').onclick = function () { $('#dlgTxt').close('ok'); };
+    $('#txtCancel').onclick = function () { $('#dlgTxt').close('cancel'); };
+    $('#txtVal').onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); $('#dlgTxt').close('ok'); } };
+    $('#actsCerrar').onclick = function () { $('#dlgActs').close(); };
+
+    $('#detPrev').onclick = function () { navDet(-1); };
+    $('#detNext').onclick = function () { navDet(1); };
+    $('#detSel').onclick = async function () {
+      var f = S.det.lista[S.det.i];
+      f.sel = f.sel ? 0 : 1;
+      await dbPut(f);
+      pintarSelDet(f);
+      renderBarra();
+    };
+    $('#detListo').onclick = function () { $('#dlgDet').close(); };
+    $('#detBorrar').onclick = async function () {
+      var f = S.det.lista[S.det.i];
+      if (!confirm('¿Borrar esta foto?')) return;
+      S.det = null;
+      $('#dlgDet').close();
+      await dbDel(f.id);
+      await cargarDia();
+    };
+    $('#dlgDet').addEventListener('close', async function () {
+      try { await guardarDet(); } catch (e) { /* ignorar */ }
+      if (S.detUrl) { URL.revokeObjectURL(S.detUrl); S.detUrl = null; }
+      S.det = null;
+      var y = window.scrollY;
+      await cargarDia();
+      window.scrollTo(0, y);
+    });
+
+    // si la app queda abierta de un día a otro, pasar al día actual
+    document.addEventListener('visibilitychange', async function () {
+      if (document.visibilityState !== 'visible' || !S.fechaAuto) return;
+      var hoy = fechaLocal(Date.now());
+      if (hoy !== S.fecha) { S.fecha = hoy; $('#fecha').value = hoy; await cargarDia(); }
+    });
+
+    await cargarDia();
+    if (!S.obras.length) nuevaObra();
+  }
+
+  init();
+})();
+
+</script>
+</body>
+</html>

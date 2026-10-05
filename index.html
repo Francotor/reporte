@@ -1011,18 +1011,39 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     $('#dlgAct').showModal();
   }
 
-  function posicion() {
+  // GPS: se pide ANTES de abrir la cámara (así el permiso y la primera señal se resuelven
+  // mientras sacas la foto) y se guarda la última posición para usarla al procesar.
+  var gpsUlt = null;      // { lat, lon, acc, t }
+  var gpsErr = '';        // motivo del último fallo
+  function pedirGps(timeoutMs) {
     return new Promise(function (res) {
-      if (!navigator.geolocation) return res(null);
+      if (!navigator.geolocation) { gpsErr = 'este navegador no tiene GPS'; return res(null); }
       var listo = false;
-      var t = setTimeout(function () { if (!listo) { listo = true; res(null); } }, 5000);
-      navigator.geolocation.getCurrentPosition(function (p) {
+      var t = setTimeout(function () { if (!listo) { listo = true; gpsErr = 'sin señal a tiempo'; res(null); } }, timeoutMs + 1500);
+      function ok(p) {
         if (listo) return; listo = true; clearTimeout(t);
-        res({ lat: p.coords.latitude, lon: p.coords.longitude, acc: Math.round(p.coords.accuracy) });
-      }, function () {
-        if (listo) return; listo = true; clearTimeout(t); res(null);
-      }, { enableHighAccuracy: true, timeout: 4500, maximumAge: 60000 });
+        gpsUlt = { lat: p.coords.latitude, lon: p.coords.longitude, acc: Math.round(p.coords.accuracy), t: Date.now() };
+        gpsErr = '';
+        res(gpsUlt);
+      }
+      function mal(e) {
+        if (listo) return; listo = true; clearTimeout(t);
+        gpsErr = e && e.code === 1 ? 'permiso de ubicación denegado' : 'sin señal a tiempo';
+        res(null);
+      }
+      try {
+        navigator.geolocation.getCurrentPosition(ok, mal, { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 30000 });
+      } catch (e) { mal(e); }
     });
+  }
+  function calentarGps() { pedirGps(20000); }
+  async function posicion() {
+    if (gpsUlt && Date.now() - gpsUlt.t < 10 * 60 * 1000) return gpsUlt;   // posición reciente
+    var p = await pedirGps(12000);
+    if (p) return p;
+    // último recurso: una posición algo más vieja (hasta 1 hora) es mejor que nada
+    if (gpsUlt && Date.now() - gpsUlt.t < 60 * 60 * 1000) return gpsUlt;
+    return null;
   }
 
   async function decodificar(file) {
@@ -1127,7 +1148,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       S.fotos.forEach(function (f) { if (f.actividad === rec.actividad) n++; });
       aviso(cambioFecha
         ? 'Guardada con fecha ' + fechaCorta(rec.ts) + '. La pantalla pasó a ese día para que la veas.'
-        : 'Guardada: ' + rec.actividad + ' (' + n + ')');
+        : 'Guardada: ' + rec.actividad + ' (' + n + ')' +
+          (ctx.conGps ? (gps ? ' · con GPS' : ' · SIN GPS (' + (gpsErr || 'sin señal') + ')') : ''));
     } finally {
       img.fin();
     }
@@ -1386,6 +1408,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       $('#dlgAct').close();
       renderActs();
       renderCam();
+      calentarGps();
       $('#cam').click();
     };
     // barra de cámara (otra foto con los mismos datos)
@@ -1393,6 +1416,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       if (!S.activa) { aviso('Toca una actividad para empezar.'); return; }
       var t = tipoDe(S.activa);
       if (incompleto(camposRelevantes(t, valsAct(S.activa)), t)) { abrirAct(S.activa); return; }
+      calentarGps();
       $('#cam').click();
     };
     $('#btnCamEdit').onclick = function () { if (S.activa) abrirAct(S.activa); };

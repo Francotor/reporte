@@ -14,7 +14,7 @@
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding-bottom: 92px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; padding-bottom: 104px; }
   [hidden] { display: none !important; }
   button, input, select, textarea { font: inherit; color: inherit; }
   input, select, textarea { width: 100%; padding: 11px 12px; border: 2px solid var(--line); border-radius: 10px; background: #fff; min-width: 0; }
@@ -25,7 +25,6 @@
   .top .row { display: flex; gap: 8px; margin-bottom: 8px; }
   .top select, .top input { border-color: transparent; color: var(--ink); }
   #btnObra { flex: 0 0 52px; border: 0; border-radius: 10px; background: var(--amber); color: #111; font-size: 24px; font-weight: 700; }
-  #fecha { flex: 0 0 150px; }
   .tabs { display: flex; gap: 6px; }
   .tabs button { flex: 1; border: 0; padding: 12px 6px; font-weight: 700; color: #cfd6e6; background: transparent; border-bottom: 4px solid transparent; }
   .tabs button.on { color: #fff; border-bottom-color: var(--amber); }
@@ -34,7 +33,8 @@
   .activa { display: flex; align-items: center; gap: 8px; background: var(--card); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
   .activa .txt { flex: 1; min-width: 0; }
   .activa small { display: block; color: var(--mut); }
-  .activa b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .activa b, .activa span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .activa span { color: var(--mut); font-size: 14px; }
   .sec { border: 2px solid var(--line); background: #fff; border-radius: 10px; padding: 10px 12px; font-weight: 600; }
   #pend { min-height: 20px; color: var(--amber-d); font-weight: 700; margin: 0 2px 6px; }
 
@@ -59,9 +59,17 @@
   .chk { position: absolute; top: 4px; right: 4px; width: 38px; height: 38px; border-radius: 50%; border: 2px solid #fff; background: rgba(0,0,0,.45); color: #fff; font-size: 20px; font-weight: 800; padding: 0; line-height: 1; }
   .th.sel .chk { background: var(--amber); border-color: var(--amber); color: #111; }
   .tg { position: absolute; left: 0; bottom: 0; right: 0; padding: 2px 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tg.falta { background: var(--bad); font-weight: 700; }
   .vacio { color: var(--mut); text-align: center; padding: 30px 10px; }
 
   .bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; padding: 10px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom)); background: rgba(242,243,245,.96); border-top: 1px solid var(--line); }
+  .camrow { display: flex; gap: 8px; }
+  .camBtn { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 14px; border: 0; border-radius: 14px; background: var(--amber); color: #111; text-align: left; }
+  .camBtn.off { background: #7d8791; color: #fff; justify-content: center; min-height: 58px; }
+  .camBtn .c1 { font-weight: 800; font-size: 17px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .camBtn .c2 { font-size: 13px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .camBtn .warn { color: #7a1610; font-weight: 800; }
+  .editBtn { flex: 0 0 58px; border: 2px solid var(--navy); border-radius: 14px; background: #fff; font-size: 22px; }
   #btnInforme { width: 100%; padding: 16px; border: 0; border-radius: 14px; background: var(--ok); color: #fff; font-weight: 800; font-size: 17px; }
   #btnInforme.vacio { background: #7d8791; }
   #btnInforme:disabled { opacity: .6; }
@@ -69,25 +77,27 @@
   .pri { background: var(--navy); color: #fff; border: 0; border-radius: 10px; padding: 12px 16px; font-weight: 700; }
   .ghost { background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 11px 16px; font-weight: 700; }
   .danger { background: #fff; border: 2px solid var(--bad); color: var(--bad); border-radius: 10px; padding: 11px 16px; font-weight: 700; }
+  .sig { width: 100%; margin-top: 10px; }
 
   dialog { width: min(94vw, 520px); max-height: 92vh; border: 0; border-radius: 16px; padding: 16px; overflow: auto; }
   dialog::backdrop { background: rgba(0,0,0,.55); }
-  dialog h3 { margin: 0 0 10px; }
-  .btns { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  dialog h3 { margin: 0 0 6px; }
+  .btns { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
   .btns > * { flex: 1; }
+  .aviso { background: #fff4d6; border: 2px solid var(--amber); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
 
-  #detImg { width: 100%; max-height: 52vh; object-fit: contain; background: #111; border-radius: 10px; display: block; }
+  #detImg { width: 100%; max-height: 46vh; object-fit: contain; background: #111; border-radius: 10px; display: block; }
   #detInfo { color: var(--mut); font-size: 13px; margin: 8px 0; }
   .nav { display: flex; gap: 8px; margin-bottom: 8px; }
   .nav button { flex: 1; font-size: 22px; padding: 8px; }
   #detSel { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--line); background: #fff; font-weight: 800; margin: 4px 0 10px; }
   #detSel.on { background: var(--amber); border-color: var(--amber); }
-  label { display: block; font-weight: 700; font-size: 13px; color: var(--mut); margin: 8px 0 4px; }
+  label { display: block; font-weight: 700; font-size: 13px; color: var(--mut); margin: 10px 0 4px; }
 
   .ai { border: 2px solid var(--line); border-radius: 12px; padding: 8px; margin-bottom: 8px; display: grid; gap: 6px; }
   .ai .del { justify-self: end; background: none; border: 0; color: var(--bad); font-weight: 700; padding: 4px 8px; }
 
-  #toast { position: fixed; left: 50%; bottom: 96px; transform: translate(-50%, 20px); background: #111; color: #fff; padding: 11px 16px; border-radius: 12px; opacity: 0; pointer-events: none; transition: .2s; z-index: 20; max-width: 90vw; text-align: center; }
+  #toast { position: fixed; left: 50%; bottom: 112px; transform: translate(-50%, 20px); background: #111; color: #fff; padding: 11px 16px; border-radius: 12px; opacity: 0; pointer-events: none; transition: .2s; z-index: 20; max-width: 90vw; text-align: center; }
   #toast.on { opacity: 1; transform: translate(-50%, 0); }
   .err { background: #fde8e6; color: var(--bad); padding: 14px; margin: 12px; border-radius: 10px; font-weight: 600; }
 </style>
@@ -101,7 +111,6 @@
   </div>
   <div class="row">
     <input type="date" id="fecha" aria-label="Fecha">
-    <input id="tramo" placeholder="Tramo / ubicación (se anota en cada foto)" autocomplete="off">
   </div>
   <nav class="tabs">
     <button type="button" data-tab="cap" class="on">📷 Capturar</button>
@@ -112,7 +121,7 @@
 <main>
   <section id="tab-cap">
     <div class="activa">
-      <div class="txt"><small>Actividad activa</small><b id="activaNombre">ninguna</b></div>
+      <div class="txt"><small>Actividad activa</small><b id="activaNombre">ninguna</b><span id="activaRef"></span></div>
       <button id="btnGaleria" type="button" class="sec">🖼 Desde galería</button>
     </div>
     <div id="pend"></div>
@@ -125,13 +134,21 @@
       <button id="filtroTodas" type="button" class="on">Todas</button>
       <button id="filtroElegidas" type="button">Solo elegidas</button>
     </div>
-    <p style="color:var(--mut);font-size:14px;margin:0 2px 4px">Toca el círculo de la esquina para elegir la foto. Toca la foto para verla grande y anotarla.</p>
+    <p style="color:var(--mut);font-size:14px;margin:0 2px 4px">Toca el círculo de la esquina para elegir la foto. Toca la foto para verla grande, corregir sus datos o anotarla.</p>
     <div id="galeria"></div>
     <div class="linkbar"><button id="btnBorrarDia" type="button" class="danger">Borrar fotos de este día</button></div>
   </section>
 </main>
 
-<footer class="bar"><button id="btnInforme" type="button">Generar informe Word</button></footer>
+<footer class="bar">
+  <div id="barCam" class="camrow">
+    <button id="btnCam" type="button" class="camBtn off"></button>
+    <button id="btnCamEdit" type="button" class="editBtn" aria-label="Cambiar los datos" hidden>✎</button>
+  </div>
+  <div id="barInf" hidden>
+    <button id="btnInforme" type="button">Generar informe Word</button>
+  </div>
+</footer>
 
 <input type="file" id="cam" accept="image/*" capture="environment" hidden>
 <input type="file" id="gal" accept="image/*" multiple hidden>
@@ -146,9 +163,31 @@
   </div>
 </dialog>
 
+<dialog id="dlgAct">
+  <h3 id="actTitulo"></h3>
+  <p style="color:var(--mut);font-size:14px;margin:0">Estos datos quedan en la foto y en el informe. Se mantienen para las siguientes fotos hasta que los cambies.</p>
+  <div id="actCampos"></div>
+  <div class="btns">
+    <button id="actCancel" type="button" class="ghost">Cancelar</button>
+    <button id="actOk" type="button" class="pri">📷 Tomar foto</button>
+  </div>
+</dialog>
+
+<dialog id="dlgGal">
+  <h3>Cargar desde la galería</h3>
+  <label for="galAct">¿A qué actividad pertenecen estas fotos?</label>
+  <select id="galAct"></select>
+  <div id="galCampos"></div>
+  <p style="color:var(--mut);font-size:14px;margin:12px 0 0">Todas las fotos que elijas en este paso quedan en esa actividad y con esos datos, con la fecha y hora en que fueron tomadas (sin GPS). Si son de otro día, la pantalla cambiará a esa fecha. Para otra actividad, repite el paso.</p>
+  <div class="btns">
+    <button id="galCancel" type="button" class="ghost">Cancelar</button>
+    <button id="galOk" type="button" class="pri">Elegir fotos</button>
+  </div>
+</dialog>
+
 <dialog id="dlgActs">
   <h3>Actividades</h3>
-  <p style="color:var(--mut);font-size:14px;margin:0 0 10px">La descripción es el texto que aparece bajo el título de cada actividad en el informe. Revísala y ajústala a tu forma de redactar.</p>
+  <p style="color:var(--mut);font-size:14px;margin:0 0 10px">Para cada actividad eliges qué datos pide al sacar la foto (desde/hasta, qué cámara, cuál poste…) y escribes la descripción que sale en el informe. Revísalas y ajústalas a tu forma de redactar.</p>
   <div id="actsLista"></div>
   <div class="btns">
     <button id="actsAgregar" type="button" class="ghost">＋ Agregar</button>
@@ -170,8 +209,7 @@
   <button id="detSel" type="button">Incluir en el informe</button>
   <label for="detAct">Actividad</label>
   <select id="detAct"></select>
-  <label for="detTramo">Tramo / ubicación</label>
-  <input id="detTramo" autocomplete="off">
+  <div id="detCampos"></div>
   <label for="detNota">Nota (medida, observación…)</label>
   <textarea id="detNota" rows="2"></textarea>
   <div class="btns">
@@ -183,6 +221,7 @@
 <dialog id="dlgRes">
   <h3>Informe listo</h3>
   <p id="resTxt" style="word-break:break-word"></p>
+  <p id="resAviso" class="aviso" hidden></p>
   <div class="btns">
     <button id="resDown" type="button" class="pri">Descargar</button>
     <button id="resShare" type="button" class="pri">Compartir</button>
@@ -485,6 +524,20 @@ var TF = (function () {
       '<w:fldSimple w:instr=" NUMPAGES "><w:r><w:rPr><w:sz w:val="16"/><w:color w:val="7F7F7F"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple>' +
       '</w:p></w:ftr>';
 
+    // Sin este bloque Word abre el archivo en "modo de compatibilidad" (formato antiguo) y pide convertirlo para editarlo.
+    var settingsXml =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
+      '<w:zoom w:percent="100"/><w:defaultTabStop w:val="720"/>' +
+      '<w:characterSpacingControl w:val="doNotCompress"/>' +
+      '<w:compat>' +
+      '<w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/>' +
+      '<w:compatSetting w:name="overrideTableStyleFontSizeAndJustification" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>' +
+      '<w:compatSetting w:name="enableOpenTypeFeatures" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>' +
+      '<w:compatSetting w:name="doNotFlipMirrorIndents" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>' +
+      '<w:compatSetting w:name="differentiateMultirowTableHeaders" w:uri="http://schemas.microsoft.com/office/word" w:val="1"/>' +
+      '</w:compat></w:settings>';
+
     var contentTypes =
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
@@ -492,6 +545,7 @@ var TF = (function () {
       '<Default Extension="xml" ContentType="application/xml"/>' +
       '<Default Extension="jpg" ContentType="image/jpeg"/>' +
       '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+      '<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>' +
       '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>' +
       '<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>' +
       '</Types>';
@@ -506,6 +560,7 @@ var TF = (function () {
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
       '<Relationship Id="rIdStyles" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>' +
+      '<Relationship Id="rIdSettings" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/settings" Target="settings.xml"/>' +
       '<Relationship Id="rIdFooter" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>' +
       relXml + '</Relationships>';
 
@@ -514,6 +569,7 @@ var TF = (function () {
       { name: '_rels/.rels', data: utf8(rootRels) },
       { name: 'word/document.xml', data: utf8(documentXml) },
       { name: 'word/styles.xml', data: utf8(stylesXml) },
+      { name: 'word/settings.xml', data: utf8(settingsXml) },
       { name: 'word/footer1.xml', data: utf8(footerXml) },
       { name: 'word/_rels/document.xml.rels', data: utf8(docRels) }
     ].concat(media);
@@ -576,32 +632,119 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
   function lsGet(k, def) { try { var v = localStorage.getItem(k); return v == null ? def : JSON.parse(v); } catch (e) { return def; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } }
 
+  // ---------- tipos de actividad: qué datos pide cada una ----------
+  var TIPOS = {
+    ruta: {
+      nombre: 'Desde / Hasta',
+      campos: [
+        { k: 'desde', label: 'Desde', ph: 'ej: Cámara 125' },
+        { k: 'hasta', label: 'Hasta', ph: 'ej: Cámara 126' }
+      ]
+    },
+    camara: {
+      nombre: 'Qué cámara',
+      campos: [{ k: 'camara', label: '¿Qué cámara?', ph: 'ej: Cámara poste 125 · Cámara atravieso empalme 4' }]
+    },
+    elemento: {
+      nombre: 'Cuál (poste, fundación…)',
+      campos: [{ k: 'elem', label: '¿Cuál se instala?', ph: 'ej: Poste 125 · Fundación poste 125' }]
+    },
+    libre: {
+      nombre: 'Ubicación libre',
+      campos: [{ k: 'tramo', label: 'Ubicación / tramo (opcional)', ph: 'ej: Tramo 3' }]
+    }
+  };
+  var FALTA_TXT = { ruta: 'desde y hasta', camara: 'qué cámara es', elemento: 'cuál se instala' };
+
+  function camposDe(tipo, f) {
+    var c = (TIPOS[tipo] || TIPOS.libre).campos.slice();
+    if (f && f.tramo && tipo !== 'libre') c.push(TIPOS.libre.campos[0]); // fotos antiguas que traen "tramo"
+    return c;
+  }
+  function camposRelevantes(tipo, vals) {
+    var o = {};
+    camposDe(tipo).forEach(function (c) { o[c.k] = (vals[c.k] || '').trim(); });
+    return o;
+  }
+  // Texto de referencia de una foto, según el tipo de su actividad
+  function refTexto(f, tipo, corto) {
+    var s = '';
+    if (tipo === 'ruta') {
+      if (f.desde && f.hasta) s = corto ? f.desde + ' → ' + f.hasta : 'Desde ' + f.desde + ' hasta ' + f.hasta;
+      else if (f.desde) s = 'Desde ' + f.desde;
+      else if (f.hasta) s = 'Hasta ' + f.hasta;
+    } else if (tipo === 'camara') s = f.camara || '';
+    else if (tipo === 'elemento') s = f.elem || '';
+    if (!s) return f.tramo || '';
+    return f.tramo && tipo !== 'libre' ? s + ' · ' + f.tramo : s;
+  }
+  function incompleto(f, tipo) {
+    if (tipo === 'libre' || !TIPOS[tipo]) return false;
+    if (f.tramo) return false;
+    if (tipo === 'ruta') return !(f.desde && f.hasta);
+    if (tipo === 'camara') return !f.camara;
+    return !f.elem;
+  }
+
   // ---------- actividades por defecto (editables desde la app) ----------
   var ACT_DEFAULT = [
-    ['Zanja', 'Excavación de zanja para el tendido de canalización, según trazado del proyecto.'],
-    ['Plaqueo de excavación', 'Plaqueo de la excavación.'],
-    ['Emplantillado', 'Ejecución de emplantillado en el fondo de la excavación.'],
-    ['Instalación de canalización', 'Instalación de ductos de canalización en la zanja.'],
-    ['Reparación de ductos', 'Reparación de ductos de canalización.'],
-    ['Capa de arena sobre ductos', 'Colocación de capa de arena sobre los ductos.'],
-    ['Cable a tierra', 'Instalación de conductor de puesta a tierra.'],
-    ['Cinta de peligro', 'Colocación de cinta de advertencia sobre la canalización.'],
-    ['Instalación de cámara', 'Instalación de cámara en el punto indicado por el proyecto.'],
-    ['Tapa de cámara', 'Instalación de tapa de cámara.'],
-    ['Refuerzo de hormigón en cámara', 'Ejecución de refuerzo de hormigón en cámara.'],
-    ['Moldaje de refuerzo', 'Instalación de moldaje para el refuerzo de hormigón.'],
-    ['Pintura de refuerzo (tierra de color)', 'Aplicación de tierra de color al refuerzo de hormigón.'],
-    ['Instalación de fundación', 'Instalación de fundación.'],
-    ['Hormigonado de fundación', 'Hormigonado de fundación.'],
-    ['Poste peatonal / ciclovía', 'Instalación de poste peatonal y/o de ciclovía.'],
-    ['Poste vial', 'Instalación de poste vial.'],
-    ['Armado de luminaria', 'Armado de luminaria.'],
-    ['Armado de tablero', 'Armado de tablero eléctrico.'],
-    ['Instalación de tablero', 'Instalación de tablero eléctrico.'],
-    ['Armado de empalme', 'Armado de empalme.'],
-    ['Instalación de empalme', 'Instalación de empalme.']
+    ['Zanja', 'Excavación de zanja para el tendido de canalización, según trazado del proyecto.', 'ruta'],
+    ['Plaqueo de excavación', 'Plaqueo de la excavación.', 'ruta'],
+    ['Emplantillado', 'Ejecución de emplantillado en el fondo de la excavación.', 'libre'],
+    ['Instalación de canalización', 'Instalación de ductos de canalización en la zanja.', 'ruta'],
+    ['Reparación de ductos', 'Reparación de ductos de canalización.', 'ruta'],
+    ['Capa de arena bajo ductos', 'Colocación de capa de arena bajo los ductos.', 'ruta'],
+    ['Capa de arena sobre ductos', 'Colocación de capa de arena sobre los ductos.', 'ruta'],
+    ['Cable a tierra', 'Instalación de conductor de puesta a tierra.', 'ruta'],
+    ['Cinta de peligro', 'Colocación de cinta de advertencia sobre la canalización.', 'ruta'],
+    ['Instalación de cámara', 'Instalación de cámara en el punto indicado por el proyecto.', 'camara'],
+    ['Tapa de cámara', 'Instalación de tapa de cámara.', 'camara'],
+    ['Refuerzo de hormigón en cámara', 'Ejecución de refuerzo de hormigón en cámara.', 'camara'],
+    ['Refuerzo de hormigón (ductos)', 'Ejecución de refuerzo de hormigón en la canalización.', 'ruta'],
+    ['Moldaje de refuerzo', 'Instalación de moldaje para el refuerzo de hormigón.', 'ruta'],
+    ['Pintura de refuerzo (tierra de color)', 'Aplicación de tierra de color al refuerzo de hormigón.', 'ruta'],
+    ['Instalación de fundación', 'Instalación de fundación.', 'elemento'],
+    ['Hormigonado de fundación', 'Hormigonado de fundación.', 'elemento'],
+    ['Poste peatonal / ciclovía', 'Instalación de poste peatonal y/o de ciclovía.', 'elemento'],
+    ['Poste vial', 'Instalación de poste vial.', 'elemento'],
+    ['Armado de luminaria', 'Armado de luminaria.', 'elemento'],
+    ['Armado de tablero', 'Armado de tablero eléctrico.', 'elemento'],
+    ['Instalación de tablero', 'Instalación de tablero eléctrico.', 'elemento'],
+    ['Armado de empalme', 'Armado de empalme.', 'elemento'],
+    ['Instalación de empalme', 'Instalación de empalme.', 'elemento']
   ];
-  function actsDefault() { return ACT_DEFAULT.map(function (a) { return { n: a[0], d: a[1] }; }); }
+  function actsDefault() { return ACT_DEFAULT.map(function (a) { return { n: a[0], d: a[1], t: a[2] }; }); }
+
+  function indiceAct(lista, nombre) {
+    for (var i = 0; i < lista.length; i++) if (lista[i].n === nombre) return i;
+    return -1;
+  }
+  function guardarActs() { lsSet('tf_acts', S.acts); lsSet('tf_acts_v', 2); }
+
+  // Lista guardada de versiones anteriores: agrega el tipo y las actividades nuevas, sin tocar tus descripciones
+  function cargarActs() {
+    var guardadas = lsGet('tf_acts', null);
+    var defs = actsDefault();
+    if (!guardadas) return defs;
+    var lista = guardadas.map(function (a) {
+      var d = defs[indiceAct(defs, a.n)];
+      return { n: a.n, d: a.d || '', t: a.t || (d ? d.t : 'libre') };
+    });
+    if (lsGet('tf_acts_v', 1) < 2) {
+      defs.forEach(function (d, i) {
+        if (indiceAct(lista, d.n) >= 0) return;
+        var pos = 0;
+        for (var j = i - 1; j >= 0; j--) {
+          var k = indiceAct(lista, defs[j].n);
+          if (k >= 0) { pos = k + 1; break; }
+        }
+        lista.splice(pos, 0, d);
+      });
+      lsSet('tf_acts', lista);
+      lsSet('tf_acts_v', 2);
+    }
+    return lista;
+  }
 
   // ---------- estado ----------
   var S = {
@@ -609,9 +752,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     obra: lsGet('tf_obra', ''),
     fecha: fechaLocal(Date.now()),
     fechaAuto: true,
-    tramo: lsGet('tf_tramo', ''),
-    acts: lsGet('tf_acts', null) || actsDefault(),
+    ctx: lsGet('tf_ctx', null) || { desde: '', hasta: '', camara: '', tramo: lsGet('tf_tramo', ''), elemAct: {} },
+    acts: cargarActs(),
     activa: lsGet('tf_activa', null),
+    dlgActNombre: null,
     fotos: [],
     filtro: 'todas',
     urls: [],
@@ -621,6 +765,58 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     detUrl: null
   };
   if (S.obras.indexOf(S.obra) < 0) S.obra = S.obras[0] || '';
+
+  function tipoDe(nombre) {
+    var i = indiceAct(S.acts, nombre);
+    return i >= 0 ? (S.acts[i].t || 'libre') : 'libre';
+  }
+  // Datos recordados entre fotos. "Desde/hasta" y "cámara" se comparten entre actividades (suele ser el mismo tramo);
+  // "cuál se instala" se recuerda por actividad, para no arrastrar el poste de una actividad a otra.
+  function valsAct(nombre) {
+    var v = { desde: S.ctx.desde || '', hasta: S.ctx.hasta || '', camara: S.ctx.camara || '', tramo: S.ctx.tramo || '' };
+    v.elem = (S.ctx.elemAct && S.ctx.elemAct[nombre]) || '';
+    return v;
+  }
+  function guardarCtx(nombre, v) {
+    ['desde', 'hasta', 'camara', 'tramo'].forEach(function (k) { if (k in v) S.ctx[k] = v[k]; });
+    if ('elem' in v) {
+      S.ctx.elemAct = S.ctx.elemAct || {};
+      S.ctx.elemAct[nombre] = v.elem;
+    }
+    lsSet('tf_ctx', S.ctx);
+  }
+
+  // ---------- campos de datos (formularios) ----------
+  function pintarCampos(cont, tipo, vals, opts) {
+    opts = opts || {};
+    cont.replaceChildren();
+    camposDe(tipo, opts.conTramo ? vals : null).forEach(function (c) {
+      cont.append(
+        h('label', { text: c.label }),
+        h('input', { 'data-k': c.k, placeholder: c.ph, value: vals[c.k] || '', autocomplete: 'off' }));
+    });
+    if (tipo === 'ruta' && opts.siguiente) {
+      cont.append(h('button', {
+        type: 'button', class: 'ghost sig',
+        onclick: function () {
+          var d = cont.querySelector('[data-k=desde]'), hh = cont.querySelector('[data-k=hasta]');
+          if (hh.value.trim()) d.value = hh.value.trim();
+          hh.value = '';
+          hh.focus();
+        }
+      }, '↪ Siguiente tramo (el hasta pasa a desde)'));
+    }
+  }
+  function leerCampos(cont) {
+    var o = {};
+    cont.querySelectorAll('input[data-k]').forEach(function (i) { o[i.dataset.k] = i.value.trim(); });
+    return o;
+  }
+  // true si se puede seguir (datos completos o el usuario acepta seguir sin ellos)
+  function confirmarDatos(tipo, vals) {
+    if (!incompleto(camposRelevantes(tipo, vals), tipo)) return true;
+    return confirm('Falta indicar ' + FALTA_TXT[tipo] + '. ¿Seguir sin ese dato?');
+  }
 
   // ---------- IndexedDB ----------
   var db = null;
@@ -659,7 +855,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     t.textContent = msg;
     t.classList.add('on');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { t.classList.remove('on'); }, 2800);
+    toastTimer = setTimeout(function () { t.classList.remove('on'); }, 3200);
   }
 
   // ---------- diálogo de texto simple ----------
@@ -682,8 +878,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
 
   // ---------- renderizado ----------
   function descDe(nombre) {
-    for (var i = 0; i < S.acts.length; i++) if (S.acts[i].n === nombre) return S.acts[i].d;
-    return '';
+    var i = indiceAct(S.acts, nombre);
+    return i >= 0 ? S.acts[i].d : '';
   }
 
   function renderObras() {
@@ -692,6 +888,12 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     if (!S.obras.length) sel.append(h('option', { value: '', text: '— crea una obra —' }));
     S.obras.forEach(function (o) { sel.append(h('option', { value: o, text: o })); });
     sel.value = S.obra;
+  }
+
+  function refActiva() {
+    if (!S.activa) return '';
+    var t = tipoDe(S.activa);
+    return refTexto(camposRelevantes(t, valsAct(S.activa)), t, true);
   }
 
   function renderActs() {
@@ -703,11 +905,32 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       cont.append(h('button', {
         type: 'button',
         class: 'act' + (S.activa === a.n ? ' on' : ''),
-        onclick: function () { tomarFoto(a.n); }
+        onclick: function () { abrirAct(a.n); }
       }, a.n, cuenta[a.n] ? h('span', { class: 'badge', text: cuenta[a.n] }) : null));
     });
     cont.append(h('button', { type: 'button', class: 'act nueva', onclick: nuevaActividad }, '＋ Otra actividad'));
     $('#activaNombre').textContent = S.activa || 'ninguna';
+    $('#activaRef').textContent = refActiva();
+  }
+
+  function renderCam() {
+    var b = $('#btnCam');
+    b.replaceChildren();
+    if (!S.activa) {
+      b.classList.add('off');
+      b.append(h('span', { class: 'c1', text: 'Toca una actividad para empezar' }));
+      $('#btnCamEdit').hidden = true;
+      return;
+    }
+    b.classList.remove('off');
+    $('#btnCamEdit').hidden = false;
+    var t = tipoDe(S.activa);
+    var falta = incompleto(camposRelevantes(t, valsAct(S.activa)), t);
+    b.append(
+      h('span', { class: 'c1', text: '📷 ' + S.activa }),
+      falta
+        ? h('span', { class: 'c2 warn', text: '⚠ Falta indicar ' + FALTA_TXT[t] + ' — toca para completar' })
+        : h('span', { class: 'c2', text: refActiva() || 'Toca para sacar otra foto' }));
   }
 
   function renderPend() {
@@ -742,6 +965,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       grupos[idx[f.actividad]].fs.push(f);
     });
     grupos.forEach(function (g) {
+      var tipo = tipoDe(g.n);
       var elegidas = g.fs.filter(function (f) { return f.sel; }).length;
       cont.append(h('h3', { class: 'gh' }, g.n, h('span', { class: 'gc', text: elegidas + '/' + g.fs.length })));
       var grid = h('div', { class: 'grid3' });
@@ -749,16 +973,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
         var url = URL.createObjectURL(new Blob([f.th], { type: 'image/jpeg' }));
         S.urls.push(url);
         var i = lista.indexOf(f);
+        var falta = incompleto(f, tipo);
+        var etiqueta = falta ? '⚠ sin datos' : refTexto(f, tipo, true);
         grid.append(h('div', { class: 'th' + (f.sel ? ' sel' : '') },
           h('img', { src: url, alt: f.actividad, onclick: function () { abrirDet(lista, i); } }),
           h('button', { type: 'button', class: 'chk', 'aria-label': 'Incluir en el informe', onclick: function () { alternarSel(f); } }, f.sel ? '✓' : ''),
-          f.tramo ? h('span', { class: 'tg', text: f.tramo }) : null));
+          etiqueta ? h('span', { class: 'tg' + (falta ? ' falta' : ''), text: etiqueta }) : null));
       });
       cont.append(grid);
     });
   }
 
-  function renderTodo() { renderActs(); renderGaleria(); renderBarra(); }
+  function renderTodo() { renderActs(); renderCam(); renderGaleria(); renderBarra(); }
 
   async function cargarDia() {
     if (!S.obra) { S.fotos = []; renderTodo(); return; }
@@ -776,12 +1002,13 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
   }
 
   // ---------- captura ----------
-  function tomarFoto(nombre) {
+  // Tocar una actividad abre la hoja de datos; desde ahí se saca la foto.
+  function abrirAct(nombre) {
     if (!S.obra) { aviso('Primero crea una obra (botón ＋ arriba).'); nuevaObra(); return; }
-    S.activa = nombre;
-    lsSet('tf_activa', nombre);
-    renderActs();
-    $('#cam').click();
+    S.dlgActNombre = nombre;
+    $('#actTitulo').textContent = nombre;
+    pintarCampos($('#actCampos'), tipoDe(nombre), valsAct(nombre), { siguiente: true });
+    $('#dlgAct').showModal();
   }
 
   function posicion() {
@@ -826,11 +1053,10 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     });
   }
 
-  // Franja inferior con: actividad / obra y tramo / fecha, hora y GPS
+  // Franja inferior con: actividad / referencia / obra, fecha y hora / GPS
   function sellar(ctx, cw, ch, lineas) {
-    var base = Math.max(14, Math.round(Math.min(cw, ch) * 0.023));
+    var base = Math.max(14, Math.round(Math.min(cw, ch) * 0.021));
     var pad = Math.round(base * 0.6);
-    ctx.font = 'bold ' + base + 'px sans-serif';
     var ancho = 0;
     lineas.forEach(function (t, i) {
       ctx.font = (i === 0 ? 'bold ' : '') + base + 'px sans-serif';
@@ -860,9 +1086,11 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       var g = c.getContext('2d');
       g.drawImage(img.src, 0, 0, cw, ch);
 
-      var l2 = ctx.obra + (ctx.tramo ? ' · ' + ctx.tramo : '');
-      var l3 = fechaCorta(ctx.ts) + ' ' + horaDe(ctx.ts) + (gps ? ' · ' + gps.lat.toFixed(5) + ', ' + gps.lon.toFixed(5) : '');
-      sellar(g, cw, ch, [ctx.actividad, l2, l3]);
+      var lineas = [ctx.actividad];
+      if (ctx.ref) lineas.push(ctx.ref);
+      lineas.push(ctx.obra + ' · ' + fechaCorta(ctx.ts) + ' ' + horaDe(ctx.ts));
+      if (gps) lineas.push('GPS ' + gps.lat.toFixed(5) + ', ' + gps.lon.toFixed(5));
+      sellar(g, cw, ch, lineas);
 
       var buf = await aBuffer(c, 0.82);
 
@@ -874,18 +1102,32 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
 
       var rec = {
         obra: ctx.obra, fecha: ctx.fecha, od: ctx.obra + '|' + ctx.fecha,
-        actividad: ctx.actividad, tramo: ctx.tramo, nota: '', ts: ctx.ts,
+        actividad: ctx.actividad, desde: '', hasta: '', camara: '', elem: '', tramo: '',
+        nota: '', ts: ctx.ts,
         lat: gps ? gps.lat : null, lon: gps ? gps.lon : null, acc: gps ? gps.acc : null,
         w: cw, h: ch, buf: buf, th: th, sel: 0
       };
+      Object.keys(ctx.campos).forEach(function (k) { rec[k] = ctx.campos[k]; });
       rec.id = await dbAdd(rec);
+
+      var cambioFecha = false;
       if (rec.obra === S.obra && rec.fecha === S.fecha) {
         S.fotos.push(rec);
         renderTodo();
+      } else if (ctx.galeria && rec.obra === S.obra) {
+        // Foto antigua cargada desde la galería: llevar la pantalla a su fecha para que se vea
+        S.fecha = rec.fecha;
+        S.fechaAuto = rec.fecha === fechaLocal(Date.now());
+        $('#fecha').value = rec.fecha;
+        S.fotos = await dbDia(S.obra, S.fecha);
+        renderTodo();
+        cambioFecha = true;
       }
       var n = 0;
       S.fotos.forEach(function (f) { if (f.actividad === rec.actividad) n++; });
-      aviso('Guardada: ' + rec.actividad + (rec.obra === S.obra && rec.fecha === S.fecha ? ' (' + n + ')' : ''));
+      aviso(cambioFecha
+        ? 'Guardada con fecha ' + fechaCorta(rec.ts) + '. La pantalla pasó a ese día para que la veas.'
+        : 'Guardada: ' + rec.actividad + ' (' + n + ')');
     } finally {
       img.fin();
     }
@@ -897,6 +1139,17 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     S.cola = S.cola.then(function () { return procesar(file, ctx); })
       .catch(function (e) { aviso('Error: ' + (e && e.message ? e.message : e)); })
       .then(function () { S.pend--; renderPend(); });
+  }
+
+  function contextoFoto(extra) {
+    var t = tipoDe(S.activa);
+    var campos = camposRelevantes(t, valsAct(S.activa));
+    var ctx = {
+      obra: S.obra, fecha: S.fecha, actividad: S.activa, campos: campos,
+      ref: refTexto(campos, t), ts: Date.now(), conGps: true, galeria: false
+    };
+    Object.keys(extra || {}).forEach(function (k) { ctx[k] = extra[k]; });
+    return ctx;
   }
 
   // ---------- obras y actividades ----------
@@ -914,34 +1167,41 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
   async function nuevaActividad() {
     var n = await pedirTexto('Nueva actividad', 'Nombre de la actividad');
     if (!n) return;
-    if (!S.acts.some(function (a) { return a.n === n; })) {
-      S.acts.push({ n: n, d: '' });
-      lsSet('tf_acts', S.acts);
+    if (indiceAct(S.acts, n) < 0) {
+      S.acts.push({ n: n, d: '', t: 'libre' });
+      guardarActs();
     }
     renderActs();
-    aviso('Agregada. Puedes escribirle una descripción en "Editar actividades".');
+    aviso('Agregada. En "Editar actividades" puedes elegir qué datos pide y escribir su descripción.');
   }
 
   function abrirActs() {
-    var trabajo = S.acts.map(function (a) { return { n: a.n, d: a.d }; });
+    var trabajo = S.acts.map(function (a) { return { n: a.n, d: a.d, t: a.t || 'libre' }; });
     var lista = $('#actsLista');
     function pintar() {
       lista.replaceChildren();
       trabajo.forEach(function (a, i) {
+        var sel = h('select', { onchange: function (e) { a.t = e.target.value; } });
+        Object.keys(TIPOS).forEach(function (k) {
+          sel.append(h('option', { value: k, text: 'Pide: ' + TIPOS[k].nombre }));
+        });
+        sel.value = a.t;
         lista.append(h('div', { class: 'ai' },
           h('input', { value: a.n, placeholder: 'Nombre', oninput: function (e) { a.n = e.target.value; } }),
+          sel,
           h('textarea', { rows: 2, placeholder: 'Descripción que sale en el informe', value: a.d, oninput: function (e) { a.d = e.target.value; } }),
           h('button', { type: 'button', class: 'del', onclick: function () { trabajo.splice(i, 1); pintar(); } }, 'Quitar')));
       });
     }
     pintar();
-    $('#actsAgregar').onclick = function () { trabajo.push({ n: '', d: '' }); pintar(); lista.lastChild.querySelector('input').focus(); };
+    $('#actsAgregar').onclick = function () { trabajo.push({ n: '', d: '', t: 'libre' }); pintar(); lista.lastChild.querySelector('input').focus(); };
     $('#actsReset').onclick = function () { trabajo = actsDefault(); pintar(); };
     $('#actsGuardar').onclick = function () {
-      S.acts = trabajo.filter(function (a) { return a.n.trim(); }).map(function (a) { return { n: a.n.trim(), d: (a.d || '').trim() }; });
-      lsSet('tf_acts', S.acts);
+      S.acts = trabajo.filter(function (a) { return a.n.trim(); })
+        .map(function (a) { return { n: a.n.trim(), d: (a.d || '').trim(), t: a.t || 'libre' }; });
+      guardarActs();
       $('#dlgActs').close();
-      renderActs();
+      renderTodo();
     };
     $('#dlgActs').showModal();
   }
@@ -960,7 +1220,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     S.detUrl = URL.createObjectURL(new Blob([f.buf], { type: 'image/jpeg' }));
     $('#detImg').src = S.detUrl;
     $('#detInfo').textContent = (S.det.i + 1) + ' de ' + S.det.lista.length + ' · ' + horaDe(f.ts) + (gpsTexto(f) ? ' · GPS ' + gpsTexto(f) : ' · sin GPS');
-    $('#detTramo').value = f.tramo || '';
     $('#detNota').value = f.nota || '';
     var sel = $('#detAct');
     sel.replaceChildren();
@@ -968,6 +1227,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     if (nombres.indexOf(f.actividad) < 0) nombres.unshift(f.actividad);
     nombres.forEach(function (n) { sel.append(h('option', { value: n, text: n })); });
     sel.value = f.actividad;
+    pintarCampos($('#detCampos'), tipoDe(f.actividad), f, { conTramo: true });
     pintarSelDet(f);
   }
 
@@ -977,14 +1237,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     b.classList.toggle('on', !!f.sel);
   }
 
+  var CLAVES = ['desde', 'hasta', 'camara', 'elem', 'tramo'];
+
   async function guardarDet() {
     if (!S.det) return;
     var f = S.det.lista[S.det.i];
-    var tramo = $('#detTramo').value.trim(), nota = $('#detNota').value.trim(), act = $('#detAct').value;
-    if (tramo !== (f.tramo || '') || nota !== (f.nota || '') || act !== f.actividad) {
-      f.tramo = tramo; f.nota = nota; f.actividad = act;
-      await dbPut(f);
-    }
+    var antes = JSON.stringify([f.actividad, f.nota, CLAVES.map(function (k) { return f[k] || ''; })]);
+    f.actividad = $('#detAct').value;
+    f.nota = $('#detNota').value.trim();
+    var v = leerCampos($('#detCampos'));
+    Object.keys(v).forEach(function (k) { f[k] = v[k]; });
+    var despues = JSON.stringify([f.actividad, f.nota, CLAVES.map(function (k) { return f[k] || ''; })]);
+    if (antes !== despues) await dbPut(f);
   }
 
   async function navDet(delta) {
@@ -999,23 +1263,24 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
   async function generarInforme() {
     var sel = S.fotos.filter(function (f) { return f.sel; }).sort(function (a, b) { return a.ts - b.ts; });
     if (!sel.length) {
-      aviso('Elige al menos una foto en la pestaña "Elegir fotos".');
-      mostrarTab('fotos');
+      aviso('Elige al menos una foto con el círculo de la esquina.');
       return;
     }
     var btn = $('#btnInforme');
     btn.disabled = true;
     try {
       await new Promise(function (r) { setTimeout(r, 30); });
-      var grupos = [], idx = {};
+      var grupos = [], idx = {}, sinDatos = 0;
       sel.forEach(function (f) {
+        var tipo = tipoDe(f.actividad);
+        if (incompleto(f, tipo)) sinDatos++;
         if (!(f.actividad in idx)) {
           idx[f.actividad] = grupos.length;
           grupos.push({ actividad: f.actividad, descripcion: descDe(f.actividad), fotos: [] });
         }
         grupos[idx[f.actividad]].fotos.push({
           jpeg: new Uint8Array(f.buf), w: f.w, h: f.h,
-          hora: horaDe(f.ts), tramo: f.tramo || '', nota: f.nota || '', gps: gpsTexto(f)
+          hora: horaDe(f.ts), tramo: refTexto(f, tipo), nota: f.nota || '', gps: gpsTexto(f)
         });
       });
       var ahora = Date.now();
@@ -1026,9 +1291,9 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
         generado: 'Generado el ' + fechaCorta(ahora) + ' a las ' + horaDe(ahora),
         grupos: grupos
       });
-      var tipo = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      var tipoMime = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       var nombre = 'Informe_' + slug(S.obra) + '_' + S.fecha + '.docx';
-      mostrarResultado(new Blob([bytes], { type: tipo }), nombre, sel.length);
+      mostrarResultado(new Blob([bytes], { type: tipoMime }), nombre, sel.length, sinDatos);
     } catch (e) {
       aviso('No se pudo generar el informe: ' + (e && e.message ? e.message : e));
     } finally {
@@ -1036,9 +1301,14 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     }
   }
 
-  function mostrarResultado(blob, nombre, n) {
+  function mostrarResultado(blob, nombre, n, sinDatos) {
     var mb = (blob.size / 1048576).toFixed(1);
     $('#resTxt').textContent = nombre + ' · ' + n + (n === 1 ? ' foto' : ' fotos') + ' · ' + mb + ' MB';
+    var av = $('#resAviso');
+    av.hidden = !sinDatos;
+    av.textContent = sinDatos
+      ? '⚠ ' + sinDatos + (sinDatos === 1 ? ' foto elegida no tiene' : ' fotos elegidas no tienen') + ' sus datos de ubicación (desde/hasta, cámara o cuál). En "Elegir fotos" se ven marcadas con "sin datos".'
+      : '';
     var url = URL.createObjectURL(blob);
     var file = null;
     try { file = new File([blob], nombre, { type: blob.type }); } catch (e) { /* File no disponible */ }
@@ -1070,6 +1340,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
   function mostrarTab(t) {
     $('#tab-cap').hidden = t !== 'cap';
     $('#tab-fotos').hidden = t !== 'fotos';
+    $('#barCam').hidden = t !== 'cap';
+    $('#barInf').hidden = t !== 'fotos';
     document.querySelectorAll('.tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === t); });
     if (t === 'fotos') renderGaleria();
     window.scrollTo(0, 0);
@@ -1084,7 +1356,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
 
     $('#fecha').value = S.fecha;
-    $('#tramo').value = S.tramo;
     renderObras();
 
     $('#obra').onchange = async function (e) { S.obra = e.target.value; lsSet('tf_obra', S.obra); await cargarDia(); };
@@ -1095,7 +1366,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       S.fechaAuto = S.fecha === fechaLocal(Date.now());
       await cargarDia();
     };
-    $('#tramo').oninput = function (e) { S.tramo = e.target.value.trim(); lsSet('tf_tramo', S.tramo); };
 
     document.querySelectorAll('.tabs button').forEach(function (b) { b.onclick = function () { mostrarTab(b.dataset.tab); }; });
     $('#filtroTodas').onclick = function () { S.filtro = 'todas'; $('#filtroTodas').classList.add('on'); $('#filtroElegidas').classList.remove('on'); renderGaleria(); };
@@ -1105,28 +1375,68 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     $('#btnInforme').onclick = generarInforme;
     $('#resCerrar').onclick = function () { $('#dlgRes').close(); };
 
-    // cámara
+    // hoja de datos de la actividad -> cámara
+    $('#actCancel').onclick = function () { $('#dlgAct').close(); };
+    $('#actOk').onclick = function () {
+      var nombre = S.dlgActNombre, t = tipoDe(nombre), v = leerCampos($('#actCampos'));
+      if (!confirmarDatos(t, v)) return;
+      guardarCtx(nombre, v);
+      S.activa = nombre;
+      lsSet('tf_activa', nombre);
+      $('#dlgAct').close();
+      renderActs();
+      renderCam();
+      $('#cam').click();
+    };
+    // barra de cámara (otra foto con los mismos datos)
+    $('#btnCam').onclick = function () {
+      if (!S.activa) { aviso('Toca una actividad para empezar.'); return; }
+      var t = tipoDe(S.activa);
+      if (incompleto(camposRelevantes(t, valsAct(S.activa)), t)) { abrirAct(S.activa); return; }
+      $('#cam').click();
+    };
+    $('#btnCamEdit').onclick = function () { if (S.activa) abrirAct(S.activa); };
+
     $('#cam').onchange = function (e) {
       var files = Array.prototype.slice.call(e.target.files || []);
       e.target.value = '';
       if (!files.length || !S.activa) return;
-      files.forEach(function (file) {
-        encolar(file, { obra: S.obra, fecha: S.fecha, tramo: S.tramo, actividad: S.activa, ts: Date.now(), conGps: true });
-      });
+      files.forEach(function (file) { encolar(file, contextoFoto()); });
     };
-    // galería
+
+    // galería: elegir actividad y datos, luego las fotos
+    function pintarGalCampos() {
+      pintarCampos($('#galCampos'), tipoDe($('#galAct').value), valsAct($('#galAct').value), { siguiente: true });
+    }
     $('#btnGaleria').onclick = function () {
       if (!S.obra) { aviso('Primero crea una obra.'); return; }
-      if (!S.activa) { aviso('Toca primero una actividad para elegir a cuál pertenecen.'); return; }
+      var sel = $('#galAct');
+      sel.replaceChildren();
+      S.acts.forEach(function (a) { sel.append(h('option', { value: a.n, text: a.n })); });
+      if (S.activa && indiceAct(S.acts, S.activa) >= 0) sel.value = S.activa;
+      pintarGalCampos();
+      $('#dlgGal').showModal();
+    };
+    $('#galAct').onchange = pintarGalCampos;
+    $('#galCancel').onclick = function () { $('#dlgGal').close(); };
+    $('#galOk').onclick = function () {
+      var nombre = $('#galAct').value, t = tipoDe(nombre), v = leerCampos($('#galCampos'));
+      if (!confirmarDatos(t, v)) return;
+      guardarCtx(nombre, v);
+      S.activa = nombre;
+      lsSet('tf_activa', nombre);
+      $('#dlgGal').close();
+      renderActs();
+      renderCam();
       $('#gal').click();
     };
     $('#gal').onchange = function (e) {
       var files = Array.prototype.slice.call(e.target.files || []);
       e.target.value = '';
-      if (!S.activa) return;
+      if (!S.activa || !files.length) return;
       files.forEach(function (file) {
         var ts = file.lastModified || Date.now();
-        encolar(file, { obra: S.obra, fecha: fechaLocal(ts), tramo: S.tramo, actividad: S.activa, ts: ts, conGps: false });
+        encolar(file, contextoFoto({ fecha: fechaLocal(ts), ts: ts, conGps: false, galeria: true }));
       });
     };
 
@@ -1138,6 +1448,15 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
 
     $('#detPrev').onclick = function () { navDet(-1); };
     $('#detNext').onclick = function () { navDet(1); };
+    $('#detAct').onchange = function () {
+      // al cambiar de actividad cambian los datos que se piden; se conserva lo ya escrito
+      var f = S.det.lista[S.det.i];
+      var temporal = {};
+      CLAVES.forEach(function (k) { temporal[k] = f[k] || ''; });
+      var v = leerCampos($('#detCampos'));
+      Object.keys(v).forEach(function (k) { temporal[k] = v[k]; });
+      pintarCampos($('#detCampos'), tipoDe($('#detAct').value), temporal, { conTramo: true });
+    };
     $('#detSel').onclick = async function () {
       var f = S.det.lista[S.det.i];
       f.sel = f.sel ? 0 : 1;
@@ -1170,6 +1489,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       if (hoy !== S.fecha) { S.fecha = hoy; $('#fecha').value = hoy; await cargarDia(); }
     });
 
+    mostrarTab('cap');
     await cargarDia();
     if (!S.obras.length) nuevaObra();
   }

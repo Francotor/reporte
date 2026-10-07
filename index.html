@@ -136,6 +136,7 @@
     </div>
     <p style="color:var(--mut);font-size:14px;margin:0 2px 4px">Toca el círculo de la esquina para elegir la foto. Toca la foto para verla grande, corregir sus datos o anotarla.</p>
     <div id="galeria"></div>
+    <div class="linkbar"><button id="btnRespaldo" type="button" class="sec">💾 Guardar fotos (respaldo)</button></div>
     <div class="linkbar"><button id="btnBorrarDia" type="button" class="danger">Borrar fotos de este día</button></div>
   </section>
 </main>
@@ -218,10 +219,23 @@
   </div>
 </dialog>
 
+<dialog id="dlgResp">
+  <h3>Respaldo de fotos</h3>
+  <p id="respTxt" style="word-break:break-word"></p>
+  <p style="color:var(--mut);font-size:14px">Con "Compartir fotos" elige Drive (o Google Fotos, WhatsApp, correo) y la carpeta. Con el ZIP te queda un solo archivo.</p>
+  <p id="respErr" class="aviso" hidden></p>
+  <div class="btns">
+    <button id="respShare" type="button" class="pri">Compartir fotos</button>
+    <button id="respZip" type="button" class="pri">Descargar ZIP</button>
+  </div>
+  <div class="btns"><button id="respCerrar" type="button" class="ghost">Cerrar</button></div>
+</dialog>
+
 <dialog id="dlgRes">
   <h3>Informe listo</h3>
   <p id="resTxt" style="word-break:break-word"></p>
   <p id="resAviso" class="aviso" hidden></p>
+  <p id="resErr" class="aviso" hidden></p>
   <div class="btns">
     <button id="resDown" type="button" class="pri">Descargar</button>
     <button id="resShare" type="button" class="pri">Compartir</button>
@@ -703,7 +717,6 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     ['Cinta de peligro', 'Colocación de cinta de advertencia sobre la canalización.', 'ruta'],
     ['Instalación de cámara', 'Instalación de cámara en el punto indicado por el proyecto.', 'camara'],
     ['Tapa de cámara', 'Instalación de tapa de cámara.', 'camara'],
-    ['Refuerzo de hormigón en cámara', 'Ejecución de refuerzo de hormigón en cámara.', 'camara'],
     ['Refuerzo de hormigón (ductos)', 'Ejecución de refuerzo de hormigón en la canalización.', 'ruta'],
     ['Moldaje de refuerzo', 'Instalación de moldaje para el refuerzo de hormigón.', 'ruta'],
     ['Pintura de refuerzo (tierra de color)', 'Aplicación de tierra de color al refuerzo de hormigón.', 'ruta'],
@@ -1085,24 +1098,32 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     });
   }
 
-  // Franja inferior con: actividad / referencia / obra, fecha y hora / GPS
+  // Sello: texto grande en la esquina inferior izquierda, con fondo oscuro solo detrás del texto
   function sellar(ctx, cw, ch, lineas) {
-    var base = Math.max(14, Math.round(Math.min(cw, ch) * 0.021));
-    var pad = Math.round(base * 0.6);
-    var ancho = 0;
-    lineas.forEach(function (t, i) {
-      ctx.font = (i === 0 ? 'bold ' : '') + base + 'px sans-serif';
-      ancho = Math.max(ancho, ctx.measureText(t).width);
-    });
-    var tam = ancho > cw - 2 * pad ? Math.floor(base * (cw - 2 * pad) / ancho) : base;
-    var alto = Math.round(tam * 1.25) * lineas.length + pad * 2;
-    ctx.fillStyle = 'rgba(0,0,0,0.62)';
-    ctx.fillRect(0, ch - alto, cw, alto);
+    var base = Math.max(20, Math.round(Math.min(cw, ch) * 0.034));
+    var pad = Math.round(base * 0.5);
+    var margen = Math.round(base * 0.4);
+    var tam = base, ancho = 0;
+    function medir() {
+      ancho = 0;
+      lineas.forEach(function (t, i) {
+        ctx.font = (i === 0 ? 'bold ' : '') + tam + 'px sans-serif';
+        ancho = Math.max(ancho, ctx.measureText(t).width);
+      });
+    }
+    medir();
+    var maxAncho = cw - 2 * margen - 2 * pad;
+    if (ancho > maxAncho) { tam = Math.max(10, Math.floor(tam * maxAncho / ancho)); medir(); }
+    var paso = Math.round(tam * 1.25);
+    var alto = paso * lineas.length + pad * 2 - (paso - tam);
+    var x0 = margen, y0 = ch - margen - alto;
+    ctx.fillStyle = 'rgba(0,0,0,0.68)';
+    ctx.fillRect(x0, y0, Math.ceil(ancho) + pad * 2, alto);
     ctx.fillStyle = '#fff';
     ctx.textBaseline = 'top';
     lineas.forEach(function (t, i) {
       ctx.font = (i === 0 ? 'bold ' : '') + tam + 'px sans-serif';
-      ctx.fillText(t, pad, ch - alto + pad + i * Math.round(tam * 1.25));
+      ctx.fillText(t, x0 + pad, y0 + pad + i * paso);
     });
   }
 
@@ -1334,6 +1355,18 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     }
   }
 
+  // Compartir con el menú del celular. Si falla, lo dice dentro de la ventana (no se queda en silencio)
+  function compartir(datos, errEl) {
+    errEl.hidden = true;
+    var p;
+    try { p = navigator.share(datos); } catch (e) { p = Promise.reject(e); }
+    return p.catch(function (e) {
+      if (e && e.name === 'AbortError') return;   // cerraste el menú: no es un error
+      errEl.hidden = false;
+      errEl.textContent = 'No se pudo abrir el menú de compartir (' + ((e && (e.name || e.message)) || 'error') + '). Usa "Descargar" y comparte el archivo desde tus descargas.';
+    });
+  }
+
   function mostrarResultado(blob, nombre, n, sinDatos) {
     var mb = (blob.size / 1048576).toFixed(1);
     $('#resTxt').textContent = nombre + ' · ' + n + (n === 1 ? ' foto' : ' fotos') + ' · ' + mb + ' MB';
@@ -1347,6 +1380,7 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     try { file = new File([blob], nombre, { type: blob.type }); } catch (e) { /* File no disponible */ }
     var puedeCompartir = !!(file && navigator.canShare && navigator.canShare({ files: [file] }));
     $('#resShare').hidden = !puedeCompartir;
+    $('#resErr').hidden = true;
     $('#resDown').onclick = function () {
       var a = h('a', { href: url, download: nombre });
       document.body.append(a);
@@ -1354,11 +1388,56 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
       a.remove();
     };
     $('#resShare').onclick = function () {
-      navigator.share({ files: [file], title: nombre }).catch(function () { /* cancelado */ });
+      compartir({ files: [file] }, $('#resErr'));
     };
     var dlg = $('#dlgRes');
     dlg.onclose = function () { setTimeout(function () { URL.revokeObjectURL(url); }, 60000); };
     dlg.showModal();
+  }
+
+  // ---------- respaldo: las fotos sueltas (con su sello) para guardarlas en Drive, etc. ----------
+  function listaRespaldo() {
+    var lista = S.fotos.slice().sort(function (a, b) { return a.ts - b.ts; });
+    if (S.filtro === 'elegidas') lista = lista.filter(function (f) { return f.sel; });
+    return lista;
+  }
+  function nombreFoto(f, i) {
+    var t = tipoDe(f.actividad);
+    var partes = [String(i + 1).padStart(2, '0'), slug(f.actividad)];
+    var ref = refTexto(f, t, true);
+    if (ref) partes.push(slug(ref));
+    partes.push(horaDe(f.ts).replace(':', ''));
+    return partes.join('_').slice(0, 110) + '.jpg';
+  }
+  function abrirRespaldo() {
+    var lista = listaRespaldo();
+    if (!lista.length) { aviso(S.filtro === 'elegidas' ? 'No hay fotos elegidas.' : 'No hay fotos este día.'); return; }
+    var archivos = [];
+    lista.forEach(function (f, i) {
+      var n = nombreFoto(f, i);
+      archivos.push({ name: n, data: new Uint8Array(f.buf) });
+    });
+    var prefijo = slug(S.obra) + '_' + S.fecha;
+    $('#respTxt').textContent = lista.length + (lista.length === 1 ? ' foto' : ' fotos') + ' de ' + S.obra + ' · ' + fechaCorta(lista[0].ts) +
+      (S.filtro === 'elegidas' ? ' (solo las elegidas)' : ' (todas las del día)');
+    var files = null;
+    try {
+      files = archivos.map(function (a) { return new File([a.data], prefijo + '_' + a.name, { type: 'image/jpeg' }); });
+    } catch (e) { files = null; }
+    var puede = !!(files && navigator.canShare && navigator.canShare({ files: files }));
+    $('#respShare').hidden = !puede;
+    $('#respErr').hidden = true;
+    $('#respShare').onclick = function () {
+      compartir({ files: files }, $('#respErr'));
+    };
+    $('#respZip').onclick = function () {
+      var zip = TF.zipStore(archivos.map(function (a) { return { name: prefijo + '/' + a.name, data: a.data }; }));
+      var url = URL.createObjectURL(new Blob([zip], { type: 'application/zip' }));
+      var a = h('a', { href: url, download: 'Fotos_' + prefijo + '.zip' });
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+    };
+    $('#dlgResp').showModal();
   }
 
   async function borrarDia() {
@@ -1405,6 +1484,8 @@ if (typeof module !== 'undefined' && module.exports) module.exports = TF;
     $('#filtroElegidas').onclick = function () { S.filtro = 'elegidas'; $('#filtroElegidas').classList.add('on'); $('#filtroTodas').classList.remove('on'); renderGaleria(); };
     $('#btnActs').onclick = abrirActs;
     $('#btnBorrarDia').onclick = borrarDia;
+    $('#btnRespaldo').onclick = abrirRespaldo;
+    $('#respCerrar').onclick = function () { $('#dlgResp').close(); };
     $('#btnInforme').onclick = generarInforme;
     $('#resCerrar').onclick = function () { $('#dlgRes').close(); };
 
